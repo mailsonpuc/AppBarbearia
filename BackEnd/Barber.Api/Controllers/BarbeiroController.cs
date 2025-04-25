@@ -2,107 +2,155 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Barber.Api.Context;
 using Barber.Api.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Barber.Api.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class BarbeiroController : ControllerBase
     {
         private readonly AppDbContext _context;
 
+        //construtor
         public BarbeiroController(AppDbContext context)
         {
+            //injetendo a dependencia
             _context = context;
         }
 
-        // GET: api/Barbeiro
+
+
+
+
+
+
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Barbeiro>>> GetBarbeiros()
+        public ActionResult<IEnumerable<Barbeiro>> Get()
         {
-            return await _context.Barbeiros.AsTracking().ToListAsync();
-        }
-
-        // GET: api/Barbeiro/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Barbeiro>> GetBarbeiro(int id)
-        {
-            var barbeiro = await _context.Barbeiros.FindAsync(id);
-
-            if (barbeiro == null)
-            {
-                return NotFound();
-            }
-
-            return barbeiro;
-        }
-
-        // PUT: api/Barbeiro/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBarbeiro(int id, Barbeiro barbeiro)
-        {
-            if (id != barbeiro.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(barbeiro).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                //throw new Exception("ocorreu um erro");
+                var barbeiros = _context.Barbeiros.AsNoTracking().ToList();
+                if (barbeiros is null)
+                {
+                    return NotFound("barbeiros Não encontrado");
+                }
+
+                return barbeiros;
+
             }
-            catch (DbUpdateConcurrencyException)
+            catch (System.Exception)
             {
-                if (!BarbeiroExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                "Ocorreu um problema ao tratar sua solicitação");
             }
 
-            return NoContent();
         }
 
-        // POST: api/Barbeiro
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+
+
+
+        [HttpGet("{id:int}", Name = "ObterBarbeiro")]
+        public ActionResult<Barbeiro> Get(int id)
+        {
+            try
+            {
+                var barbeiro = _context.Barbeiros.AsNoTracking().FirstOrDefault(ba => ba.BarbeiroId == id);
+                if (barbeiro is null)
+                {
+                    return NotFound($"barbeiro com id= {id} não encontrado");
+                }
+
+                return Ok(barbeiro);
+            }
+
+            catch (System.Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                "Ocorreu um problema ao tratar sua solicitação");
+            }
+
+        }
+
+
+
+
         [HttpPost]
-        public async Task<ActionResult<Barbeiro>> PostBarbeiro(Barbeiro barbeiro)
+        public ActionResult Post(Barbeiro barbeiro)
         {
-            _context.Barbeiros.Add(barbeiro);
-            await _context.SaveChangesAsync();
+            if (barbeiro is null)
+            {
+                return BadRequest("Ocorreu um erro 400");
+            }
 
-            return CreatedAtAction("GetBarbeiro", new { id = barbeiro.Id }, barbeiro);
+            _context.Barbeiros.Add(barbeiro);
+            _context.SaveChanges();
+
+            return new CreatedAtRouteResult("ObterBarbeiro",
+            new { id = barbeiro.BarbeiroId }, barbeiro);
+
         }
 
-        // DELETE: api/Barbeiro/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBarbeiro(int id)
+
+
+
+
+        [HttpPut("{id:int}")]
+        public ActionResult Put(int id, Barbeiro barbeiro)
         {
-            var barbeiro = await _context.Barbeiros.FindAsync(id);
-            if (barbeiro == null)
+            if (id != barbeiro.BarbeiroId)
             {
-                return NotFound();
+                return BadRequest("Não encontrado");
+            }
+
+            _context.Entry(barbeiro).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _context.SaveChanges();
+
+            //return NoContent();
+            return Ok(barbeiro);
+
+        }
+
+
+
+
+
+        [HttpDelete("{id:int}")]
+        public ActionResult Delete(int id)
+        {
+            var barbeiro = _context.Barbeiros.FirstOrDefault(b => b.BarbeiroId == id);
+            if (barbeiro is null)
+            {
+                return NotFound($"barbeiro com id= {id} não Localizada...");
+
             }
 
             _context.Barbeiros.Remove(barbeiro);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
-            return NoContent();
+
+            return Ok($"barbeiro com id= {id} removida");
         }
 
-        private bool BarbeiroExists(int id)
-        {
-            return _context.Barbeiros.Any(e => e.Id == id);
-        }
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }

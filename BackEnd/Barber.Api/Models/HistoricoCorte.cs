@@ -9,15 +9,17 @@ namespace Barber.Api.Models
     {
         [Key]
         //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int IdHistorico { get; set; }
+        public int HistoricoId { get; set; }
 
+        [StringLength(300)]
         public string? Foto { get; set; }
 
+        [StringLength(300)]
         public string? Observacoes { get; set; }
 
         [ForeignKey("Agendamento")]
-        public int IdAgendamento { get; set; }
-         //ignorando json
+        public int AgendamentoId { get; set; }
+        //ignorando json
         [JsonIgnore]
         public Agendamento Agendamento { get; set; } = null!;
     }

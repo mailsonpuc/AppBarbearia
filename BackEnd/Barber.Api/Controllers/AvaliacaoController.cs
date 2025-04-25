@@ -11,12 +11,12 @@ namespace Barber.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class HorarioDisponivelController : ControllerBase
+    public class AvaliacaoController : ControllerBase
     {
         private readonly AppDbContext _context;
 
         //construtor
-        public HorarioDisponivelController(AppDbContext context)
+        public AvaliacaoController (AppDbContext context)
         {
             //injetendo a dependencia
             _context = context;
@@ -25,21 +25,19 @@ namespace Barber.Api.Controllers
 
 
 
-
-
         [HttpGet]
-        public ActionResult<IEnumerable<HorarioDisponivel>> Get()
+        public ActionResult<IEnumerable<Avaliacao>> Get()
         {
             try
             {
                 //throw new Exception("ocorreu um erro");
-                var horarios = _context.HorariosDisponiveis.AsNoTracking().ToList();
-                if (horarios is null)
+                var avaliacoes = _context.Avaliacoes.AsNoTracking().ToList();
+                if (avaliacoes is null)
                 {
-                    return NotFound("horarios Não encontrado");
+                    return NotFound("avaliacoes Não encontrado");
                 }
 
-                return horarios;
+                return avaliacoes;
 
             }
             catch (System.Exception)
@@ -54,18 +52,18 @@ namespace Barber.Api.Controllers
 
 
 
-        [HttpGet("{id:int}", Name = "ObterHorarios")]
+        [HttpGet("{id:int}", Name = "ObterAvaliacao")]
         public ActionResult<Oferece> Get(int id)
         {
             try
             {
-                var horario = _context.HorariosDisponiveis.AsNoTracking().FirstOrDefault(ho => ho.HorarioId == id);
-                if (horario is null)
+                var av = _context.Avaliacoes.AsNoTracking().FirstOrDefault(o => o.AvaliacaoId == id);
+                if (av is null)
                 {
-                    return NotFound($"horario com id= {id} não encontrado");
+                    return NotFound($"avaliação com id= {id} não encontrado");
                 }
 
-                return Ok(horario);
+                return Ok(av);
             }
 
             catch (System.Exception)
@@ -76,68 +74,66 @@ namespace Barber.Api.Controllers
             }
 
         }
-
-
-
 
 
 
 
         [HttpPost]
-        public ActionResult Post(HorarioDisponivel horario)
+        public ActionResult Post(Avaliacao av)
         {
-            if (horario is null)
+            if (av is null)
             {
                 return BadRequest("Ocorreu um erro 400");
             }
 
-            _context.HorariosDisponiveis.Add(horario);
+            _context.Avaliacoes.Add(av);
             _context.SaveChanges();
 
-            return new CreatedAtRouteResult("ObterHorarios",
-            new { id = horario.HorarioId }, horario);
+            return new CreatedAtRouteResult("ObterAvaliacao",
+            new { id = av.AvaliacaoId }, av);
 
         }
+
 
 
 
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, HorarioDisponivel horario)
+        public ActionResult Put(int id, Avaliacao av)
         {
-            if (id != horario.HorarioId)
+            if (id != av.AvaliacaoId)
             {
                 return BadRequest("Não encontrado");
             }
 
-            _context.Entry(horario).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _context.Entry(av).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             _context.SaveChanges();
 
             //return NoContent();
-            return Ok(horario);
+            return Ok(av);
 
         }
+
+
 
 
 
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            var horario = _context.HorariosDisponiveis.FirstOrDefault(o => o.HorarioId == id);
-            if (horario is null)
+            var av = _context.Avaliacoes.FirstOrDefault(c => c.AvaliacaoId == id);
+            if (av is null)
             {
-                return NotFound($"horario com id= {id} não Localizada...");
+                return NotFound($"avaliação com id= {id} não Localizada...");
 
             }
 
-            _context.HorariosDisponiveis.Remove(horario);
+            _context.Avaliacoes.Remove(av);
             _context.SaveChanges();
 
 
-            return Ok($"horario com id= {id} removida");
+            return Ok($"avaliação com id= {id} removida");
         }
-
-
 
 
 

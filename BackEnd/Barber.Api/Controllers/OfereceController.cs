@@ -2,121 +2,142 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Barber.Api.Context;
 using Barber.Api.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Barber.Api.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class OfereceController : ControllerBase
     {
         private readonly AppDbContext _context;
 
+        //construtor
         public OfereceController(AppDbContext context)
         {
+            //injetendo a dependencia
             _context = context;
         }
 
-        // GET: api/Oferece
+
+
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Oferece>>> GetOferece()
+        public ActionResult<IEnumerable<Oferece>> Get()
         {
-            return await _context.Oferece.AsNoTracking().ToListAsync();
-        }
-
-        // GET: api/Oferece/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Oferece>> GetOferece(int id)
-        {
-            var oferece = await _context.Oferece.FindAsync(id);
-
-            if (oferece == null)
-            {
-                return NotFound();
-            }
-
-            return oferece;
-        }
-
-        // PUT: api/Oferece/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutOferece(int id, Oferece oferece)
-        {
-            if (id != oferece.IdBarbeiro)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(oferece).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                //throw new Exception("ocorreu um erro");
+                var servicos = _context.Oferece.AsNoTracking().ToList();
+                if (servicos is null)
+                {
+                    return NotFound("servicos Não encontrado");
+                }
+
+                return servicos;
+
             }
-            catch (DbUpdateConcurrencyException)
+            catch (System.Exception)
             {
-                if (!OfereceExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                "Ocorreu um problema ao tratar sua solicitação");
             }
 
-            return NoContent();
         }
 
-        // POST: api/Oferece
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+
+
+
+        [HttpGet("{id:int}", Name = "ObterOferece")]
+        public ActionResult<Oferece> Get(int id)
+        {
+            try
+            {
+                var oferece = _context.Oferece.AsNoTracking().FirstOrDefault(o => o.ServicoId == id);
+                if (oferece is null)
+                {
+                    return NotFound($"oferece com id= {id} não encontrado");
+                }
+
+                return Ok(oferece);
+            }
+
+            catch (System.Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                "Ocorreu um problema ao tratar sua solicitação");
+            }
+
+        }
+
+
+
+
         [HttpPost]
-        public async Task<ActionResult<Oferece>> PostOferece(Oferece oferece)
+        public ActionResult Post(Oferece oferece)
         {
-            _context.Oferece.Add(oferece);
-            try
+            if (oferece is null)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (OfereceExists(oferece.IdBarbeiro))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest("Ocorreu um erro 400");
             }
 
-            return CreatedAtAction("GetOferece", new { id = oferece.IdBarbeiro }, oferece);
+            _context.Oferece.Add(oferece);
+            _context.SaveChanges();
+
+            return new CreatedAtRouteResult("ObterOferece",
+            new { id = oferece.ServicoId }, oferece);
+
         }
 
-        // DELETE: api/Oferece/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOferece(int id)
+
+
+
+
+        [HttpPut("{id:int}")]
+        public ActionResult Put(int id, Oferece oferece)
         {
-            var oferece = await _context.Oferece.FindAsync(id);
-            if (oferece == null)
+            if (id != oferece.ServicoId)
             {
-                return NotFound();
+                return BadRequest("Não encontrado");
+            }
+
+            _context.Entry(oferece).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _context.SaveChanges();
+
+            //return NoContent();
+            return Ok(oferece);
+
+        }
+
+
+
+
+
+        [HttpDelete("{id:int}")]
+        public ActionResult Delete(int id)
+        {
+            var oferece = _context.Oferece.FirstOrDefault(c => c.ServicoId == id);
+            if (oferece is null)
+            {
+                return NotFound($"oferece com id= {id} não Localizada...");
+
             }
 
             _context.Oferece.Remove(oferece);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
-            return NoContent();
+
+            return Ok($"oferece com id= {id} removida");
         }
 
-        private bool OfereceExists(int id)
-        {
-            return _context.Oferece.Any(e => e.IdBarbeiro == id);
-        }
+
+
+
+
     }
 }

@@ -8,7 +8,7 @@ namespace Barber.Api.Models
     public class Cliente
     {
         [Key]
-        public int Id { get; set; }
+        public int ClienteId { get; set; }
 
         [StringLength(100)]
         public string? Nome { get; set; }

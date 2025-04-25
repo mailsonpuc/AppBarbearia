@@ -24,73 +24,74 @@ namespace Barber.Api.Migrations
 
             modelBuilder.Entity("Barber.Api.Models.Agendamento", b =>
                 {
-                    b.Property<int>("IdAgendamento")
+                    b.Property<int>("AgendamentoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdAgendamento"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AgendamentoId"));
 
-                    b.Property<int>("IdCliente")
+                    b.Property<int>("ClienteId")
                         .HasColumnType("int");
 
-                    b.Property<int>("IdHorario")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IdServico")
+                    b.Property<int>("HorarioId")
                         .HasColumnType("int");
 
                     b.Property<bool?>("LembreteEnviado")
                         .HasColumnType("bit");
 
+                    b.Property<int>("ServicoId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Status")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("IdAgendamento");
+                    b.HasKey("AgendamentoId");
 
-                    b.HasIndex("IdCliente");
+                    b.HasIndex("ClienteId");
 
-                    b.HasIndex("IdHorario");
+                    b.HasIndex("HorarioId");
 
-                    b.HasIndex("IdServico");
+                    b.HasIndex("ServicoId");
 
                     b.ToTable("Agendamentos");
                 });
 
             modelBuilder.Entity("Barber.Api.Models.Avaliacao", b =>
                 {
-                    b.Property<int>("IdAvaliacao")
+                    b.Property<int>("AvaliacaoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdAvaliacao"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AvaliacaoId"));
+
+                    b.Property<int>("AgendamentoId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Comentario")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<DateTime?>("Data")
                         .HasColumnType("date");
 
-                    b.Property<int>("IdAgendamento")
-                        .HasColumnType("int");
-
                     b.Property<int?>("Nota")
                         .HasColumnType("int");
 
-                    b.HasKey("IdAvaliacao");
+                    b.HasKey("AvaliacaoId");
 
-                    b.HasIndex("IdAgendamento");
+                    b.HasIndex("AgendamentoId");
 
                     b.ToTable("Avaliacoes");
                 });
 
             modelBuilder.Entity("Barber.Api.Models.Barbeiro", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("BarbeiroId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BarbeiroId"));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -110,18 +111,18 @@ namespace Barber.Api.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("Id");
+                    b.HasKey("BarbeiroId");
 
                     b.ToTable("Barbeiros");
                 });
 
             modelBuilder.Entity("Barber.Api.Models.Cliente", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ClienteId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClienteId"));
 
                     b.Property<DateTime?>("DataNascimento")
                         .HasColumnType("date");
@@ -144,42 +145,47 @@ namespace Barber.Api.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("Id");
+                    b.HasKey("ClienteId");
 
                     b.ToTable("Clientes");
                 });
 
             modelBuilder.Entity("Barber.Api.Models.HistoricoCorte", b =>
                 {
-                    b.Property<int>("IdHistorico")
+                    b.Property<int>("HistoricoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdHistorico"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HistoricoId"));
 
-                    b.Property<string>("Foto")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("IdAgendamento")
+                    b.Property<int>("AgendamentoId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Foto")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
                     b.Property<string>("Observacoes")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
-                    b.HasKey("IdHistorico");
+                    b.HasKey("HistoricoId");
 
-                    b.HasIndex("IdAgendamento");
+                    b.HasIndex("AgendamentoId");
 
                     b.ToTable("HistoricosCorte");
                 });
 
             modelBuilder.Entity("Barber.Api.Models.HorarioDisponivel", b =>
                 {
-                    b.Property<int>("IdHorario")
+                    b.Property<int>("HorarioId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdHorario"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HorarioId"));
+
+                    b.Property<int>("BarbeiroId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("Data")
                         .HasColumnType("date");
@@ -190,33 +196,38 @@ namespace Barber.Api.Migrations
                     b.Property<TimeSpan?>("HoraInicio")
                         .HasColumnType("time");
 
-                    b.Property<int>("IdBarbeiro")
-                        .HasColumnType("int");
+                    b.HasKey("HorarioId");
 
-                    b.HasKey("IdHorario");
-
-                    b.HasIndex("IdBarbeiro");
+                    b.HasIndex("BarbeiroId");
 
                     b.ToTable("HorariosDisponiveis");
                 });
 
             modelBuilder.Entity("Barber.Api.Models.Oferece", b =>
                 {
-                    b.Property<int>("IdBarbeiro")
+                    b.Property<int>("BarbeiroId")
                         .HasColumnType("int")
                         .HasColumnOrder(0);
 
-                    b.Property<int>("IdServico")
+                    b.Property<int>("ServicoId")
                         .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Duracao")
                         .HasColumnType("int");
 
+                    b.Property<int>("IdBarbeiro")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdServico")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Preco")
                         .HasColumnType("decimal(10,2)");
 
-                    b.HasKey("IdBarbeiro", "IdServico");
+                    b.HasKey("BarbeiroId", "ServicoId");
+
+                    b.HasIndex("IdBarbeiro");
 
                     b.HasIndex("IdServico");
 
@@ -225,20 +236,21 @@ namespace Barber.Api.Migrations
 
             modelBuilder.Entity("Barber.Api.Models.Servico", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ServicoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ServicoId"));
 
                     b.Property<string>("Descricao")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<string>("Nome")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("Id");
+                    b.HasKey("ServicoId");
 
                     b.ToTable("Servicos");
                 });
@@ -247,19 +259,19 @@ namespace Barber.Api.Migrations
                 {
                     b.HasOne("Barber.Api.Models.Cliente", "Cliente")
                         .WithMany()
-                        .HasForeignKey("IdCliente")
+                        .HasForeignKey("ClienteId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Barber.Api.Models.HorarioDisponivel", "HorarioDisponivel")
                         .WithMany()
-                        .HasForeignKey("IdHorario")
+                        .HasForeignKey("HorarioId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Barber.Api.Models.Servico", "Servico")
                         .WithMany()
-                        .HasForeignKey("IdServico")
+                        .HasForeignKey("ServicoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -274,7 +286,7 @@ namespace Barber.Api.Migrations
                 {
                     b.HasOne("Barber.Api.Models.Agendamento", "Agendamento")
                         .WithMany()
-                        .HasForeignKey("IdAgendamento")
+                        .HasForeignKey("AgendamentoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -285,7 +297,7 @@ namespace Barber.Api.Migrations
                 {
                     b.HasOne("Barber.Api.Models.Agendamento", "Agendamento")
                         .WithMany()
-                        .HasForeignKey("IdAgendamento")
+                        .HasForeignKey("AgendamentoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -296,7 +308,7 @@ namespace Barber.Api.Migrations
                 {
                     b.HasOne("Barber.Api.Models.Barbeiro", "Barbeiro")
                         .WithMany()
-                        .HasForeignKey("IdBarbeiro")
+                        .HasForeignKey("BarbeiroId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

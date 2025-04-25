@@ -2,107 +2,151 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Barber.Api.Context;
 using Barber.Api.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Barber.Api.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class HistoricoCorteController : ControllerBase
     {
         private readonly AppDbContext _context;
 
+        //construtor
         public HistoricoCorteController(AppDbContext context)
         {
+            //injetendo a dependencia
             _context = context;
         }
 
-        // GET: api/HistoricoCorte
+
+
+
+
+
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<HistoricoCorte>>> GetHistoricosCorte()
+        public ActionResult<IEnumerable<HistoricoCorte>> Get()
         {
-            return await _context.HistoricosCorte.AsNoTracking().ToListAsync();
-        }
-
-        // GET: api/HistoricoCorte/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<HistoricoCorte>> GetHistoricoCorte(int id)
-        {
-            var historicoCorte = await _context.HistoricosCorte.FindAsync(id);
-
-            if (historicoCorte == null)
-            {
-                return NotFound();
-            }
-
-            return historicoCorte;
-        }
-
-        // PUT: api/HistoricoCorte/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutHistoricoCorte(int id, HistoricoCorte historicoCorte)
-        {
-            if (id != historicoCorte.IdHistorico)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(historicoCorte).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                //throw new Exception("ocorreu um erro");
+                var historicos = _context.HistoricosCorte.AsNoTracking().ToList();
+                if (historicos is null)
+                {
+                    return NotFound("historicos Não encontrado");
+                }
+
+                return historicos;
+
             }
-            catch (DbUpdateConcurrencyException)
+            catch (System.Exception)
             {
-                if (!HistoricoCorteExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                "Ocorreu um problema ao tratar sua solicitação");
             }
 
-            return NoContent();
         }
 
-        // POST: api/HistoricoCorte
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+
+
+
+        [HttpGet("{id:int}", Name = "Obterhistorico")]
+        public ActionResult<HistoricoCorte> Get(int id)
+        {
+            try
+            {
+                var historico = _context.HistoricosCorte.AsNoTracking().FirstOrDefault(hi => hi.HistoricoId == id);
+                if (historico is null)
+                {
+                    return NotFound($"historico com id= {id} não encontrado");
+                }
+
+                return Ok(historico);
+            }
+
+            catch (System.Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                "Ocorreu um problema ao tratar sua solicitação");
+            }
+
+        }
+
+
+
+
         [HttpPost]
-        public async Task<ActionResult<HistoricoCorte>> PostHistoricoCorte(HistoricoCorte historicoCorte)
+        public ActionResult Post(HistoricoCorte historico)
         {
-            _context.HistoricosCorte.Add(historicoCorte);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetHistoricoCorte", new { id = historicoCorte.IdHistorico }, historicoCorte);
-        }
-
-        // DELETE: api/HistoricoCorte/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteHistoricoCorte(int id)
-        {
-            var historicoCorte = await _context.HistoricosCorte.FindAsync(id);
-            if (historicoCorte == null)
+            if (historico is null)
             {
-                return NotFound();
+                return BadRequest("Ocorreu um erro 400");
             }
 
-            _context.HistoricosCorte.Remove(historicoCorte);
-            await _context.SaveChangesAsync();
+            _context.HistoricosCorte.Add(historico);
+            _context.SaveChanges();
 
-            return NoContent();
+            return new CreatedAtRouteResult("Obterhistorico",
+            new { id = historico.HistoricoId }, historico);
+
         }
 
-        private bool HistoricoCorteExists(int id)
+
+
+
+
+        [HttpPut("{id:int}")]
+        public ActionResult Put(int id, HistoricoCorte historico)
         {
-            return _context.HistoricosCorte.Any(e => e.IdHistorico == id);
+            if (id != historico.HistoricoId)
+            {
+                return BadRequest("Não encontrado");
+            }
+
+            _context.Entry(historico).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _context.SaveChanges();
+
+            //return NoContent();
+            return Ok(historico);
+
         }
+
+
+
+
+
+        [HttpDelete("{id:int}")]
+        public ActionResult Delete(int id)
+        {
+            var historico = _context.HistoricosCorte.FirstOrDefault(h => h.HistoricoId == id);
+            if (historico is null)
+            {
+                return NotFound($"historico com id= {id} não Localizada...");
+
+            }
+
+            _context.HistoricosCorte.Remove(historico);
+            _context.SaveChanges();
+
+
+            return Ok($"historico com id= {id} removida");
+        }
+
+
+
+
+
+
+
+
+
+
+
     }
 }

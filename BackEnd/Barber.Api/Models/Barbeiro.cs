@@ -9,7 +9,7 @@ namespace Barber.Api.Models
     {
         [Key]
         //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public int BarbeiroId { get; set; }
 
         [StringLength(100)]
         public string? Nome { get; set; }

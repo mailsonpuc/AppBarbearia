@@ -2,123 +2,140 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Barber.Api.Context;
 using Barber.Api.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Barber.Api.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class AgendamentoController : ControllerBase
     {
         private readonly AppDbContext _context;
 
+        //construtor
         public AgendamentoController(AppDbContext context)
         {
+            //injetendo a dependencia
             _context = context;
         }
 
 
-        [HttpGet("AgendamentosClientes")]
-        public ActionResult<IEnumerable<Agendamento>> GetAgendamentosClientes()
-        {
-            var agendamentos = _context.Agendamentos
-                .Include(cli => cli.Cliente)
-                .Include(se => se.Servico)
-                .Include(ho => ho.HorarioDisponivel)
-                
-                .ToList();
-
-            return Ok(agendamentos);
-        }
 
 
-
-        // GET: api/Agendamento
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Agendamento>>> GetAgendamentos()
+        public ActionResult<IEnumerable<Agendamento>> Get()
         {
-            return await _context.Agendamentos.AsNoTracking().ToListAsync();
-        }
-
-        // GET: api/Agendamento/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Agendamento>> GetAgendamento(int id)
-        {
-            var agendamento = await _context.Agendamentos.FindAsync(id);
-
-            if (agendamento == null)
-            {
-                return NotFound();
-            }
-
-            return agendamento;
-        }
-
-        // PUT: api/Agendamento/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAgendamento(int id, Agendamento agendamento)
-        {
-            if (id != agendamento.IdAgendamento)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(agendamento).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                //throw new Exception("ocorreu um erro");
+                var agendamentos = _context.Agendamentos.AsNoTracking().ToList();
+                if (agendamentos is null)
+                {
+                    return NotFound("agendamentos Não encontrado");
+                }
+
+                return agendamentos;
+
             }
-            catch (DbUpdateConcurrencyException)
+            catch (System.Exception)
             {
-                if (!AgendamentoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                "Ocorreu um problema ao tratar sua solicitação");
             }
 
-            return NoContent();
         }
 
-        // POST: api/Agendamento
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+
+
+
+        [HttpGet("{id:int}", Name = "ObterAgendamentos")]
+        public ActionResult<Oferece> Get(int id)
+        {
+            try
+            {
+                var ag = _context.Agendamentos.AsNoTracking().FirstOrDefault(a => a.AgendamentoId == id);
+                if (ag is null)
+                {
+                    return NotFound($"agendamento com id= {id} não encontrado");
+                }
+
+                return Ok(ag);
+            }
+
+            catch (System.Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                "Ocorreu um problema ao tratar sua solicitação");
+            }
+
+        }
+
+
+
+
         [HttpPost]
-        public async Task<ActionResult<Agendamento>> PostAgendamento(Agendamento agendamento)
+        public ActionResult Post(Agendamento ag)
         {
-            _context.Agendamentos.Add(agendamento);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetAgendamento", new { id = agendamento.IdAgendamento }, agendamento);
-        }
-
-        // DELETE: api/Agendamento/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAgendamento(int id)
-        {
-            var agendamento = await _context.Agendamentos.FindAsync(id);
-            if (agendamento == null)
+            if (ag is null)
             {
-                return NotFound();
+                return BadRequest("Ocorreu um erro 400");
             }
 
-            _context.Agendamentos.Remove(agendamento);
-            await _context.SaveChangesAsync();
+            _context.Agendamentos.Add(ag);
+            _context.SaveChanges();
 
-            return NoContent();
+            return new CreatedAtRouteResult("ObterAgendamentos",
+            new { id = ag.AgendamentoId }, ag);
+
         }
 
-        private bool AgendamentoExists(int id)
+
+
+
+
+        [HttpPut("{id:int}")]
+        public ActionResult Put(int id, Agendamento ag)
         {
-            return _context.Agendamentos.Any(e => e.IdAgendamento == id);
+            if (id != ag.AgendamentoId)
+            {
+                return BadRequest("Não encontrado");
+            }
+
+            _context.Entry(ag).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _context.SaveChanges();
+
+            //return NoContent();
+            return Ok(ag);
+
         }
+
+
+
+
+
+        [HttpDelete("{id:int}")]
+        public ActionResult Delete(int id)
+        {
+            var ag = _context.Agendamentos.FirstOrDefault(c => c.AgendamentoId == id);
+            if (ag is null)
+            {
+                return NotFound($"agendamento com id= {id} não Localizada...");
+
+            }
+
+            _context.Agendamentos.Remove(ag);
+            _context.SaveChanges();
+
+
+            return Ok($"agendamento com id= {id} removida");
+        }
+
+
+
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Barber.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class AjusteTabelas : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,7 +15,7 @@ namespace Barber.Api.Migrations
                 name: "Barbeiros",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    BarbeiroId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -24,14 +24,14 @@ namespace Barber.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Barbeiros", x => x.Id);
+                    table.PrimaryKey("PK_Barbeiros", x => x.BarbeiroId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Clientes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    ClienteId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -41,42 +41,42 @@ namespace Barber.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Clientes", x => x.Id);
+                    table.PrimaryKey("PK_Clientes", x => x.ClienteId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Servicos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    ServicoId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    Descricao = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Descricao = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Servicos", x => x.Id);
+                    table.PrimaryKey("PK_Servicos", x => x.ServicoId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "HorariosDisponiveis",
                 columns: table => new
                 {
-                    IdHorario = table.Column<int>(type: "int", nullable: false)
+                    HorarioId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IdBarbeiro = table.Column<int>(type: "int", nullable: false),
+                    BarbeiroId = table.Column<int>(type: "int", nullable: false),
                     Data = table.Column<DateTime>(type: "date", nullable: true),
                     HoraInicio = table.Column<TimeSpan>(type: "time", nullable: true),
                     HoraFim = table.Column<TimeSpan>(type: "time", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_HorariosDisponiveis", x => x.IdHorario);
+                    table.PrimaryKey("PK_HorariosDisponiveis", x => x.HorarioId);
                     table.ForeignKey(
-                        name: "FK_HorariosDisponiveis_Barbeiros_IdBarbeiro",
-                        column: x => x.IdBarbeiro,
+                        name: "FK_HorariosDisponiveis_Barbeiros_BarbeiroId",
+                        column: x => x.BarbeiroId,
                         principalTable: "Barbeiros",
-                        principalColumn: "Id",
+                        principalColumn: "BarbeiroId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -84,25 +84,27 @@ namespace Barber.Api.Migrations
                 name: "Oferece",
                 columns: table => new
                 {
-                    IdBarbeiro = table.Column<int>(type: "int", nullable: false),
-                    IdServico = table.Column<int>(type: "int", nullable: false),
+                    BarbeiroId = table.Column<int>(type: "int", nullable: false),
+                    ServicoId = table.Column<int>(type: "int", nullable: false),
                     Preco = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    Duracao = table.Column<int>(type: "int", nullable: false)
+                    Duracao = table.Column<int>(type: "int", nullable: false),
+                    IdBarbeiro = table.Column<int>(type: "int", nullable: false),
+                    IdServico = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Oferece", x => new { x.IdBarbeiro, x.IdServico });
+                    table.PrimaryKey("PK_Oferece", x => new { x.BarbeiroId, x.ServicoId });
                     table.ForeignKey(
                         name: "FK_Oferece_Barbeiros_IdBarbeiro",
                         column: x => x.IdBarbeiro,
                         principalTable: "Barbeiros",
-                        principalColumn: "Id",
+                        principalColumn: "BarbeiroId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Oferece_Servicos_IdServico",
                         column: x => x.IdServico,
                         principalTable: "Servicos",
-                        principalColumn: "Id",
+                        principalColumn: "ServicoId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -110,34 +112,34 @@ namespace Barber.Api.Migrations
                 name: "Agendamentos",
                 columns: table => new
                 {
-                    IdAgendamento = table.Column<int>(type: "int", nullable: false)
+                    AgendamentoId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Status = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LembreteEnviado = table.Column<bool>(type: "bit", nullable: true),
-                    IdCliente = table.Column<int>(type: "int", nullable: false),
-                    IdServico = table.Column<int>(type: "int", nullable: false),
-                    IdHorario = table.Column<int>(type: "int", nullable: false)
+                    ClienteId = table.Column<int>(type: "int", nullable: false),
+                    ServicoId = table.Column<int>(type: "int", nullable: false),
+                    HorarioId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Agendamentos", x => x.IdAgendamento);
+                    table.PrimaryKey("PK_Agendamentos", x => x.AgendamentoId);
                     table.ForeignKey(
-                        name: "FK_Agendamentos_Clientes_IdCliente",
-                        column: x => x.IdCliente,
+                        name: "FK_Agendamentos_Clientes_ClienteId",
+                        column: x => x.ClienteId,
                         principalTable: "Clientes",
-                        principalColumn: "Id",
+                        principalColumn: "ClienteId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Agendamentos_HorariosDisponiveis_IdHorario",
-                        column: x => x.IdHorario,
+                        name: "FK_Agendamentos_HorariosDisponiveis_HorarioId",
+                        column: x => x.HorarioId,
                         principalTable: "HorariosDisponiveis",
-                        principalColumn: "IdHorario",
+                        principalColumn: "HorarioId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Agendamentos_Servicos_IdServico",
-                        column: x => x.IdServico,
+                        name: "FK_Agendamentos_Servicos_ServicoId",
+                        column: x => x.ServicoId,
                         principalTable: "Servicos",
-                        principalColumn: "Id",
+                        principalColumn: "ServicoId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -145,21 +147,21 @@ namespace Barber.Api.Migrations
                 name: "Avaliacoes",
                 columns: table => new
                 {
-                    IdAvaliacao = table.Column<int>(type: "int", nullable: false)
+                    AvaliacaoId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nota = table.Column<int>(type: "int", nullable: true),
-                    Comentario = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Comentario = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
                     Data = table.Column<DateTime>(type: "date", nullable: true),
-                    IdAgendamento = table.Column<int>(type: "int", nullable: false)
+                    AgendamentoId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Avaliacoes", x => x.IdAvaliacao);
+                    table.PrimaryKey("PK_Avaliacoes", x => x.AvaliacaoId);
                     table.ForeignKey(
-                        name: "FK_Avaliacoes_Agendamentos_IdAgendamento",
-                        column: x => x.IdAgendamento,
+                        name: "FK_Avaliacoes_Agendamentos_AgendamentoId",
+                        column: x => x.AgendamentoId,
                         principalTable: "Agendamentos",
-                        principalColumn: "IdAgendamento",
+                        principalColumn: "AgendamentoId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -167,51 +169,56 @@ namespace Barber.Api.Migrations
                 name: "HistoricosCorte",
                 columns: table => new
                 {
-                    IdHistorico = table.Column<int>(type: "int", nullable: false)
+                    HistoricoId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Foto = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Observacoes = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IdAgendamento = table.Column<int>(type: "int", nullable: false)
+                    Foto = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
+                    Observacoes = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
+                    AgendamentoId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_HistoricosCorte", x => x.IdHistorico);
+                    table.PrimaryKey("PK_HistoricosCorte", x => x.HistoricoId);
                     table.ForeignKey(
-                        name: "FK_HistoricosCorte_Agendamentos_IdAgendamento",
-                        column: x => x.IdAgendamento,
+                        name: "FK_HistoricosCorte_Agendamentos_AgendamentoId",
+                        column: x => x.AgendamentoId,
                         principalTable: "Agendamentos",
-                        principalColumn: "IdAgendamento",
+                        principalColumn: "AgendamentoId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Agendamentos_IdCliente",
+                name: "IX_Agendamentos_ClienteId",
                 table: "Agendamentos",
-                column: "IdCliente");
+                column: "ClienteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Agendamentos_IdHorario",
+                name: "IX_Agendamentos_HorarioId",
                 table: "Agendamentos",
-                column: "IdHorario");
+                column: "HorarioId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Agendamentos_IdServico",
+                name: "IX_Agendamentos_ServicoId",
                 table: "Agendamentos",
-                column: "IdServico");
+                column: "ServicoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Avaliacoes_IdAgendamento",
+                name: "IX_Avaliacoes_AgendamentoId",
                 table: "Avaliacoes",
-                column: "IdAgendamento");
+                column: "AgendamentoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HistoricosCorte_IdAgendamento",
+                name: "IX_HistoricosCorte_AgendamentoId",
                 table: "HistoricosCorte",
-                column: "IdAgendamento");
+                column: "AgendamentoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HorariosDisponiveis_IdBarbeiro",
+                name: "IX_HorariosDisponiveis_BarbeiroId",
                 table: "HorariosDisponiveis",
+                column: "BarbeiroId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Oferece_IdBarbeiro",
+                table: "Oferece",
                 column: "IdBarbeiro");
 
             migrationBuilder.CreateIndex(

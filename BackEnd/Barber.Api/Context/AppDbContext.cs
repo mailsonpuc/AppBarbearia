@@ -26,48 +26,48 @@ namespace Barber.Api.Context
         {
             // Chave composta em Oferece
             modelBuilder.Entity<Oferece>()
-                .HasKey(o => new { o.IdBarbeiro, o.IdServico });
+                .HasKey(o => new { o.BarbeiroId, o.ServicoId });
 
             // Relacionamento Cliente - Agendamento
             modelBuilder.Entity<Agendamento>()
                 .HasOne(a => a.Cliente)
                 .WithMany()
-                .HasForeignKey(a => a.IdCliente)
+                .HasForeignKey(a => a.ClienteId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Relacionamento Servico - Agendamento
             modelBuilder.Entity<Agendamento>()
                 .HasOne(a => a.Servico)
                 .WithMany()
-                .HasForeignKey(a => a.IdServico)
+                .HasForeignKey(a => a.ServicoId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Relacionamento HorarioDisponivel - Agendamento
             modelBuilder.Entity<Agendamento>()
                 .HasOne(a => a.HorarioDisponivel)
                 .WithMany()
-                .HasForeignKey(a => a.IdHorario)
+                .HasForeignKey(a => a.HorarioId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Relacionamento Barbeiro - HorarioDisponivel
             modelBuilder.Entity<HorarioDisponivel>()
                 .HasOne(h => h.Barbeiro)
                 .WithMany()
-                .HasForeignKey(h => h.IdBarbeiro)
+                .HasForeignKey(h => h.BarbeiroId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Relacionamento Agendamento - Avaliacao
             modelBuilder.Entity<Avaliacao>()
                 .HasOne(av => av.Agendamento)
                 .WithMany()
-                .HasForeignKey(av => av.IdAgendamento)
+                .HasForeignKey(av => av.AgendamentoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Relacionamento Agendamento - HistoricoCorte
             modelBuilder.Entity<HistoricoCorte>()
                 .HasOne(hc => hc.Agendamento)
                 .WithMany()
-                .HasForeignKey(hc => hc.IdAgendamento)
+                .HasForeignKey(hc => hc.AgendamentoId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
 

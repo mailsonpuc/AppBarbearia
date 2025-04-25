@@ -2,107 +2,149 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Barber.Api.Context;
 using Barber.Api.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Barber.Api.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class ClienteController : ControllerBase
     {
         private readonly AppDbContext _context;
 
+        //construtor
         public ClienteController(AppDbContext context)
         {
+            //injetendo a dependencia
             _context = context;
         }
 
-        // GET: api/Cliente
+
+
+
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes()
+        public ActionResult<IEnumerable<Cliente>> Get()
         {
-            return await _context.Clientes.AsNoTracking().ToListAsync();
-        }
-
-        // GET: api/Cliente/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Cliente>> GetCliente(int id)
-        {
-            var cliente = await _context.Clientes.FindAsync(id);
-
-            if (cliente == null)
-            {
-                return NotFound();
-            }
-
-            return cliente;
-        }
-
-        // PUT: api/Cliente/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCliente(int id, Cliente cliente)
-        {
-            if (id != cliente.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(cliente).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                //throw new Exception("ocorreu um erro");
+                var clientes = _context.Clientes.AsNoTracking().ToList();
+                if (clientes is null)
+                {
+                    return NotFound("clientes Não encontrado");
+                }
+
+                return clientes;
+
             }
-            catch (DbUpdateConcurrencyException)
+            catch (System.Exception)
             {
-                if (!ClienteExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                "Ocorreu um problema ao tratar sua solicitação");
             }
 
-            return NoContent();
         }
 
-        // POST: api/Cliente
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+
+
+
+
+
+
+        [HttpGet("{id:int}", Name = "ObterCliente")]
+        public ActionResult<Cliente> Get(int id)
+        {
+            try
+            {
+                var cliente = _context.Clientes.AsNoTracking().FirstOrDefault(cl => cl.ClienteId == id);
+                if (cliente is null)
+                {
+                    return NotFound($"cliente com id= {id} não encontrado");
+                }
+
+                return Ok(cliente);
+            }
+
+            catch (System.Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                "Ocorreu um problema ao tratar sua solicitação");
+            }
+
+        }
+
+
+
+
         [HttpPost]
-        public async Task<ActionResult<Cliente>> PostCliente(Cliente cliente)
+        public ActionResult Post(Cliente cliente)
         {
-            _context.Clientes.Add(cliente);
-            await _context.SaveChangesAsync();
+            if (cliente is null)
+            {
+                return BadRequest("Ocorreu um erro 400");
+            }
 
-            return CreatedAtAction("GetCliente", new { id = cliente.Id }, cliente);
+            _context.Clientes.Add(cliente);
+            _context.SaveChanges();
+
+            return new CreatedAtRouteResult("ObterCliente",
+            new { id = cliente.ClienteId }, cliente);
+
         }
 
-        // DELETE: api/Cliente/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCliente(int id)
+
+
+
+
+        [HttpPut("{id:int}")]
+        public ActionResult Put(int id, Cliente cliente)
         {
-            var cliente = await _context.Clientes.FindAsync(id);
-            if (cliente == null)
+            if (id != cliente.ClienteId)
             {
-                return NotFound();
+                return BadRequest("Não encontrado");
+            }
+
+            _context.Entry(cliente).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _context.SaveChanges();
+
+            //return NoContent();
+            return Ok(cliente);
+
+        }
+
+
+
+
+
+        [HttpDelete("{id:int}")]
+        public ActionResult Delete(int id)
+        {
+            var cliente = _context.Clientes.FirstOrDefault(c => c.ClienteId == id);
+            if (cliente is null)
+            {
+                return NotFound($"cliente com id= {id} não Localizada...");
+
             }
 
             _context.Clientes.Remove(cliente);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
-            return NoContent();
+
+            return Ok($"cliente com id= {id} removida");
         }
 
-        private bool ClienteExists(int id)
-        {
-            return _context.Clientes.Any(e => e.Id == id);
-        }
+
+
+
+
+
+
+
     }
 }

@@ -8,10 +8,10 @@ namespace Barber.Api.Models
     public class Oferece
     {
         [Key, Column(Order = 0)]
-        public int IdBarbeiro { get; set; }
+        public int BarbeiroId { get; set; }
 
         [Key, Column(Order = 1)]
-        public int IdServico { get; set; }
+        public int ServicoId { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(10,2)")]

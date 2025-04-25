@@ -10,10 +10,10 @@ namespace Barber.Api.Models
     {
         [Key]
         //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int IdHorario { get; set; }
+        public int HorarioId { get; set; }
 
         [ForeignKey("Barbeiro")]
-        public int IdBarbeiro { get; set; }
+        public int BarbeiroId { get; set; }
         //ignorando json
         [JsonIgnore]
         public Barbeiro Barbeiro { get; set; } = null!;

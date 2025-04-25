@@ -9,7 +9,7 @@ namespace Barber.Api.Models
     {
         [Key]
         //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int IdAgendamento { get; set; }
+        public int AgendamentoId { get; set; }
 
         [StringLength(100)]
         public string? Status { get; set; }
@@ -17,20 +17,20 @@ namespace Barber.Api.Models
         public bool? LembreteEnviado { get; set; }
 
         [ForeignKey("Cliente")]
-        public int IdCliente { get; set; }
+        public int ClienteId { get; set; }
          //ignorando json
         //[JsonIgnore]
         public Cliente Cliente { get; set; } = null!;
 
         [ForeignKey("Servico")]
-        public int IdServico { get; set; }
+        public int ServicoId { get; set; }
          //ignorando json
         //[JsonIgnore]
         public Servico Servico { get; set; } = null!;
 
        
         [ForeignKey("HorarioDisponivel")]
-        public int IdHorario { get; set; }
+        public int HorarioId { get; set; }
          //ignorando json
         //[JsonIgnore]
         public HorarioDisponivel HorarioDisponivel { get; set; } = null!;
