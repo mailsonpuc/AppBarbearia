@@ -1,0 +1,1 @@
+## front-end em react native, expo go. 
