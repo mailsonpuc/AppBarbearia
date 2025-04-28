@@ -11,13 +11,11 @@ namespace Barber.Api.Controllers
     public class ClienteController : ControllerBase
     {
         //usando o repository
-        private readonly IRepository<Cliente> _repository;
+        private readonly IUnitOfWork _uof;
 
-        //construtor
-        public ClienteController(IRepository<Cliente> repository)
+        public ClienteController(IUnitOfWork uof)
         {
-            //injetendo a dependencia
-            _repository = repository;
+            _uof = uof;
         }
 
 
@@ -30,7 +28,7 @@ namespace Barber.Api.Controllers
             try
             {
                 //throw new Exception("ocorreu um erro");
-                var clientes = _repository.GetAll();
+                var clientes = _uof.ClienteRepository.GetAll();
                 if (clientes is null)
                 {
                     return NotFound("clientes Não encontrado");
@@ -59,7 +57,7 @@ namespace Barber.Api.Controllers
         {
             try
             {
-                var cliente = _repository.Get(c => c.ClienteId == id);
+                var cliente = _uof.ClienteRepository.Get(c => c.ClienteId == id);
                 if (cliente is null)
                 {
                     return NotFound($"cliente com id= {id} não encontrado");
@@ -88,7 +86,8 @@ namespace Barber.Api.Controllers
                 return BadRequest("Ocorreu um erro 400");
             }
 
-            var clienteCriado = _repository.Create(cliente);
+            var clienteCriado = _uof.ClienteRepository.Create(cliente);
+            _uof.Commit();
 
             return new CreatedAtRouteResult("ObterCliente",
             new { id = clienteCriado.ClienteId }, clienteCriado);
@@ -107,7 +106,8 @@ namespace Barber.Api.Controllers
                 return BadRequest("Não encontrado");
             }
 
-            _repository.Update(cliente);
+            _uof.ClienteRepository.Update(cliente);
+            _uof.Commit();
             return Ok(cliente);
 
         }
@@ -119,7 +119,7 @@ namespace Barber.Api.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            var cliente = _repository.Get(c => c.ClienteId == id);
+            var cliente = _uof.ClienteRepository.Get(c => c.ClienteId == id);
             if (cliente is null)
             {
                 return NotFound($"cliente com id= {id} não Localizada...");
@@ -128,7 +128,8 @@ namespace Barber.Api.Controllers
 
 
 
-            var clienteExcluido = _repository.Delete(cliente);
+            var clienteExcluido = _uof.ClienteRepository.Delete(cliente);
+            _uof.Commit();
             return Ok(clienteExcluido);
 
         }

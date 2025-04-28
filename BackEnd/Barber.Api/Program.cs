@@ -37,7 +37,8 @@ builder.Services.AddScoped<IAgendamentoRepository, AgendamentoRepository>();
 //usando repository Generico
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-
+//usando Unit Of work
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
 

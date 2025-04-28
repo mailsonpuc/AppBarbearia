@@ -12,13 +12,12 @@ namespace Barber.Api.Controllers
     public class HistoricoCorteController : ControllerBase
     {
         //usando o repository
-        private readonly IRepository<HistoricoCorte> _repository;
+   
+        private readonly IUnitOfWork _uof;
 
-        //construtor
-        public HistoricoCorteController(IRepository<HistoricoCorte> repository)
+        public HistoricoCorteController(IUnitOfWork uof)
         {
-            //injetendo a dependencia
-            _repository = repository;
+            _uof = uof;
         }
 
 
@@ -34,7 +33,7 @@ namespace Barber.Api.Controllers
             try
             {
                 //throw new Exception("ocorreu um erro");
-                var historicos = _repository.GetAll();
+                var historicos = _uof.HistoricoCorteRepository.GetAll();
                 if (historicos is null)
                 {
                     return NotFound("historicos Não encontrado");
@@ -60,7 +59,7 @@ namespace Barber.Api.Controllers
         {
             try
             {
-                var historico = _repository.Get(h => h.HistoricoId == id);
+                var historico = _uof.HistoricoCorteRepository.Get(h => h.HistoricoId == id);
                 if (historico is null)
                 {
                     return NotFound($"historico com id= {id} não encontrado");
@@ -89,7 +88,8 @@ namespace Barber.Api.Controllers
                 return BadRequest("Ocorreu um erro 400");
             }
 
-            var historicoCriado = _repository.Create(historico);
+            var historicoCriado = _uof.HistoricoCorteRepository.Create(historico);
+            _uof.Commit();
 
             return new CreatedAtRouteResult("Obterhistorico",
             new { id = historicoCriado.HistoricoId }, historicoCriado);
@@ -107,7 +107,8 @@ namespace Barber.Api.Controllers
             {
                 return BadRequest("Não encontrado");
             }
-            _repository.Update(historico);
+            _uof.HistoricoCorteRepository.Update(historico);
+            _uof.Commit();
             return Ok(historico);
 
         }
@@ -119,7 +120,7 @@ namespace Barber.Api.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            var historico = _repository.Get(h => h.HistoricoId == id);
+            var historico = _uof.HistoricoCorteRepository.Get(h => h.HistoricoId == id);
             if (historico is null)
             {
                 return NotFound($"historico com id= {id} não Localizada...");
@@ -127,7 +128,8 @@ namespace Barber.Api.Controllers
             }
 
 
-            var historicoExcluido = _repository.Delete(historico);
+            var historicoExcluido = _uof.HistoricoCorteRepository.Delete(historico);
+            _uof.Commit();
             return Ok(historicoExcluido);
         }
 

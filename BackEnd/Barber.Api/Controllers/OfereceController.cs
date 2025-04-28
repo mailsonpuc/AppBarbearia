@@ -11,14 +11,14 @@ namespace Barber.Api.Controllers
     public class OfereceController : ControllerBase
     {
         //usando o repository
-        private readonly IRepository<Oferece> _repository;
 
-        //construtor
-        public OfereceController(IRepository<Oferece> repository)
+        private readonly IUnitOfWork _uof;
+
+        public OfereceController(IUnitOfWork uof)
         {
-            //injetendo a dependencia
-            _repository = repository;
+            _uof = uof;
         }
+
 
 
 
@@ -29,7 +29,7 @@ namespace Barber.Api.Controllers
             try
             {
                 //throw new Exception("ocorreu um erro");
-                var ofereces = _repository.GetAll();
+                var ofereces = _uof.OfereceRepository.GetAll();
                 if (ofereces is null)
                 {
                     return NotFound("ofereces Não encontrado");
@@ -55,7 +55,7 @@ namespace Barber.Api.Controllers
         {
             try
             {
-                var oferece = _repository.Get(o => o.ServicoId == id);
+                var oferece = _uof.OfereceRepository.Get(o => o.ServicoId == id);
                 if (oferece is null)
                 {
                     return NotFound($"oferece com id= {id} não encontrado");
@@ -84,7 +84,8 @@ namespace Barber.Api.Controllers
                 return BadRequest("Ocorreu um erro 400");
             }
 
-            var ofereceCriado = _repository.Create(oferece);
+            var ofereceCriado = _uof.OfereceRepository.Create(oferece);
+            _uof.Commit();
 
             return new CreatedAtRouteResult("ObterOferece",
             new { id = ofereceCriado.ServicoId }, ofereceCriado);
@@ -103,7 +104,8 @@ namespace Barber.Api.Controllers
                 return BadRequest("Não encontrado");
             }
 
-            _repository.Update(oferece);
+            _uof.OfereceRepository.Update(oferece);
+            _uof.Commit();
 
             //return NoContent();
             return Ok(oferece);
@@ -117,7 +119,7 @@ namespace Barber.Api.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            var oferece = _repository.Get(o => o.ServicoId == id);
+            var oferece = _uof.OfereceRepository.Get(o => o.ServicoId == id);
             if (oferece is null)
             {
                 return NotFound($"oferece com id= {id} não Localizada...");
@@ -127,7 +129,8 @@ namespace Barber.Api.Controllers
 
 
 
-            var ofereceExcluido = _repository.Delete(oferece);
+            var ofereceExcluido = _uof.OfereceRepository.Delete(oferece);
+             _uof.Commit();
             return Ok(ofereceExcluido);
 
         }

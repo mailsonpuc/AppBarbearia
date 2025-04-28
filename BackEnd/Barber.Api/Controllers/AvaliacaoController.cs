@@ -11,15 +11,12 @@ namespace Barber.Api.Controllers
     public class AvaliacaoController : ControllerBase
     {
         //usando o repository
-        private readonly IRepository<Avaliacao> _repository;
+        private readonly IUnitOfWork _uof;
 
-        //construtor
-        public AvaliacaoController(IRepository<Avaliacao> repository)
+        public AvaliacaoController(IUnitOfWork uof)
         {
-            //injetendo a dependencia
-            _repository = repository;
+            _uof = uof;
         }
-
 
 
 
@@ -29,7 +26,7 @@ namespace Barber.Api.Controllers
             try
             {
                 //throw new Exception("ocorreu um erro");
-                var avaliacoes = _repository.GetAll();
+                var avaliacoes = _uof.AvaliacaoRepository.GetAll();
                 if (avaliacoes is null)
                 {
                     return NotFound("avaliacoes Não encontrado");
@@ -55,7 +52,7 @@ namespace Barber.Api.Controllers
         {
             try
             {
-                var av = _repository.Get(a => a.AvaliacaoId == id);
+                var av = _uof.AvaliacaoRepository.Get(a => a.AvaliacaoId == id);
                 if (av is null)
                 {
                     return NotFound($"avaliação com id= {id} não encontrado");
@@ -85,7 +82,8 @@ namespace Barber.Api.Controllers
             }
 
 
-            var avaliacaoCriado = _repository.Create(av);
+            var avaliacaoCriado = _uof.AvaliacaoRepository.Create(av);
+            _uof.Commit();
 
             return new CreatedAtRouteResult("ObterAvaliacao",
             new { id = avaliacaoCriado.AvaliacaoId }, avaliacaoCriado);
@@ -104,7 +102,8 @@ namespace Barber.Api.Controllers
                 return BadRequest("Não encontrado");
             }
 
-            _repository.Update(av);
+            _uof.AvaliacaoRepository.Update(av);
+            _uof.Commit();
 
             //return NoContent();
             return Ok(av);
@@ -118,7 +117,7 @@ namespace Barber.Api.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            var av = _repository.Get(a => a.AvaliacaoId == id);
+            var av = _uof.AvaliacaoRepository.Get(a => a.AvaliacaoId == id);
             if (av is null)
             {
                 return NotFound($"avaliação com id= {id} não Localizada...");
@@ -127,7 +126,8 @@ namespace Barber.Api.Controllers
 
 
 
-            var avaliacaoExcluido = _repository.Delete(av);
+            var avaliacaoExcluido = _uof.AvaliacaoRepository.Delete(av);
+            _uof.Commit();
             return Ok(avaliacaoExcluido);
         }
 

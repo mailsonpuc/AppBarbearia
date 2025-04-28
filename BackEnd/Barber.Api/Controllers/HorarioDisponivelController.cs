@@ -10,13 +10,12 @@ namespace Barber.Api.Controllers
     public class HorarioDisponivelController : ControllerBase
     {
         //usando o repository
-        private readonly IRepository<HorarioDisponivel> _repository;
 
-        //construtor
-        public HorarioDisponivelController(IRepository<HorarioDisponivel> repository)
+        private readonly IUnitOfWork _uof;
+
+        public HorarioDisponivelController(IUnitOfWork uof)
         {
-            //injetendo a dependencia
-            _repository = repository;
+            _uof = uof;
         }
 
 
@@ -28,7 +27,7 @@ namespace Barber.Api.Controllers
             try
             {
                 //throw new Exception("ocorreu um erro");
-                var horarios = _repository.GetAll();
+                var horarios = _uof.HorarioDisponivelRepository.GetAll();
                 if (horarios is null)
                 {
                     return NotFound("horarios Não encontrado");
@@ -54,7 +53,7 @@ namespace Barber.Api.Controllers
         {
             try
             {
-                var horario = _repository.Get(h => h.HorarioId == id);
+                var horario = _uof.HorarioDisponivelRepository.Get(h => h.HorarioId == id);
                 if (horario is null)
                 {
                     return NotFound($"horario com id= {id} não encontrado");
@@ -86,7 +85,8 @@ namespace Barber.Api.Controllers
                 return BadRequest("Ocorreu um erro 400");
             }
 
-            var horarioCriado = _repository.Create(horario);
+            var horarioCriado = _uof.HorarioDisponivelRepository.Create(horario);
+            _uof.Commit();
 
             return new CreatedAtRouteResult("ObterHorarios",
             new { id = horarioCriado.HorarioId }, horarioCriado);
@@ -104,8 +104,8 @@ namespace Barber.Api.Controllers
                 return BadRequest("Não encontrado");
             }
 
-            _repository.Update(horario);
-
+            _uof.HorarioDisponivelRepository.Update(horario);
+            _uof.Commit();
             //return NoContent();
             return Ok(horario);
 
@@ -116,16 +116,17 @@ namespace Barber.Api.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            var horario = _repository.Get(h => h.HorarioId == id);
+            var horario = _uof.HorarioDisponivelRepository.Get(h => h.HorarioId == id);
             if (horario is null)
             {
                 return NotFound($"horario com id= {id} não Localizada...");
 
             }
 
-            
 
-            var horarioExcluido = _repository.Delete(horario);
+
+            var horarioExcluido = _uof.HorarioDisponivelRepository.Delete(horario);
+            _uof.Commit();
             return Ok(horarioExcluido);
         }
 

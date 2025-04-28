@@ -11,13 +11,12 @@ namespace Barber.Api.Controllers
     public class BarbeiroController : ControllerBase
     {
         //usando o repository
-        private readonly IRepository<Barbeiro> _repository;
 
-        //construtor
-        public BarbeiroController(IRepository<Barbeiro> repository)
+        private readonly IUnitOfWork _uof;
+
+        public BarbeiroController(IUnitOfWork uof)
         {
-            //injetendo a dependencia
-            _repository = repository;
+            _uof = uof;
         }
 
 
@@ -32,7 +31,7 @@ namespace Barber.Api.Controllers
             try
             {
                 //throw new Exception("ocorreu um erro");
-                var barbeiros = _repository.GetAll();
+                var barbeiros = _uof.BarbeiroRepository.GetAll();
                 if (barbeiros is null)
                 {
                     return NotFound("barbeiros Não encontrado");
@@ -58,7 +57,7 @@ namespace Barber.Api.Controllers
         {
             try
             {
-                var barbeiro = _repository.Get(b => b.BarbeiroId == id);
+                var barbeiro = _uof.BarbeiroRepository.Get(b => b.BarbeiroId == id);
                 if (barbeiro is null)
                 {
                     return NotFound($"barbeiro com id= {id} não encontrado");
@@ -87,7 +86,8 @@ namespace Barber.Api.Controllers
                 return BadRequest("Ocorreu um erro 400");
             }
 
-            var barbeiroCriado = _repository.Create(barbeiro);
+            var barbeiroCriado = _uof.BarbeiroRepository.Create(barbeiro);
+            _uof.Commit();
 
             return new CreatedAtRouteResult("ObterBarbeiro",
             new { id = barbeiroCriado.BarbeiroId }, barbeiroCriado);
@@ -107,7 +107,8 @@ namespace Barber.Api.Controllers
             }
 
 
-            _repository.Update(barbeiro);
+            _uof.BarbeiroRepository.Update(barbeiro);
+            _uof.Commit();
             return Ok(barbeiro);
 
         }
@@ -119,7 +120,7 @@ namespace Barber.Api.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            var barbeiro = _repository.Get(x => x.BarbeiroId == id);
+            var barbeiro = _uof.BarbeiroRepository.Get(x => x.BarbeiroId == id);
             if (barbeiro is null)
             {
                 return NotFound($"barbeiro com id= {id} não Localizada...");
@@ -127,7 +128,8 @@ namespace Barber.Api.Controllers
             }
 
 
-            var barbeiroExcluido = _repository.Delete(barbeiro);
+            var barbeiroExcluido = _uof.BarbeiroRepository.Delete(barbeiro);
+            _uof.Commit();
             return Ok(barbeiroExcluido);
 
         }

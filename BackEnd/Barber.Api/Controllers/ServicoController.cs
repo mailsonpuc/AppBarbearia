@@ -11,13 +11,12 @@ namespace Barber.Api.Controllers
     public class ServicoController : ControllerBase
     {
         //usando o repository
-        private readonly IRepository<Servico> _repository;
 
-        //construtor
-        public ServicoController(IRepository<Servico> repository)
+        private readonly IUnitOfWork _uof;
+
+        public ServicoController(IUnitOfWork uof)
         {
-            //injetendo a dependencia
-            _repository = repository;
+            _uof = uof;
         }
 
 
@@ -31,7 +30,7 @@ namespace Barber.Api.Controllers
             try
             {
                 //throw new Exception("ocorreu um erro");
-                var servicos = _repository.GetAll();
+                var servicos = _uof.ServicoRepository.GetAll();
                 if (servicos is null)
                 {
                     return NotFound("servicos Não encontrado");
@@ -58,7 +57,7 @@ namespace Barber.Api.Controllers
         {
             try
             {
-                var servico = _repository.Get(s => s.ServicoId == id);
+                var servico = _uof.ServicoRepository.Get(s => s.ServicoId == id);
                 if (servico is null)
                 {
                     return NotFound($"servico com id= {id} não encontrado");
@@ -88,7 +87,8 @@ namespace Barber.Api.Controllers
                 return BadRequest("Ocorreu um erro 400");
             }
 
-            var servicoCriado = _repository.Create(servico);
+            var servicoCriado = _uof.ServicoRepository.Create(servico);
+            _uof.Commit();
 
             return new CreatedAtRouteResult("ObterServico",
             new { id = servicoCriado.ServicoId }, servicoCriado);
@@ -107,7 +107,8 @@ namespace Barber.Api.Controllers
                 return BadRequest("Não encontrado");
             }
 
-            _repository.Update(servico);
+            _uof.ServicoRepository.Update(servico);
+            _uof.Commit();
 
             //return NoContent();
             return Ok(servico);
@@ -120,7 +121,7 @@ namespace Barber.Api.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            var servico = _repository.Get(c => c.ServicoId == id);
+            var servico = _uof.ServicoRepository.Get(c => c.ServicoId == id);
             if (servico is null)
             {
                 return NotFound($"servico com id= {id} não Localizada...");
@@ -128,7 +129,8 @@ namespace Barber.Api.Controllers
             }
 
 
-            var servicoExcluida = _repository.Delete(servico);
+            var servicoExcluida = _uof.ServicoRepository.Delete(servico);
+            _uof.Commit();
             return Ok(servicoExcluida);
 
         }

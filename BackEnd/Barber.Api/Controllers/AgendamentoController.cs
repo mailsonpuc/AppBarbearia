@@ -10,15 +10,17 @@ namespace Barber.Api.Controllers
     [Route("api/[controller]")]
     public class AgendamentoController : ControllerBase
     {
-        //usando o repository
-        private readonly IRepository<Agendamento> _repository;
+        // //usando o repository
+        // private readonly IRepository<Agendamento> _repository;
+        private readonly IUnitOfWork _uof;
 
         //construtor
-        public AgendamentoController(IRepository<Agendamento> repository)
+        public AgendamentoController(IUnitOfWork uof)
         {
-            //injetendo a dependencia
-            _repository = repository;
+            _uof = uof;
         }
+
+
 
 
 
@@ -29,7 +31,7 @@ namespace Barber.Api.Controllers
             try
             {
                 //throw new Exception("ocorreu um erro");
-                var agendamentos = _repository.GetAll();
+                var agendamentos = _uof.AgendamentoRepository.GetAll();
                 if (agendamentos is null)
                 {
                     return NotFound("agendamentos Não encontrado");
@@ -55,7 +57,7 @@ namespace Barber.Api.Controllers
         {
             try
             {
-                var ag =  _repository.Get(g => g.AgendamentoId == id);
+                var ag = _uof.AgendamentoRepository.Get(g => g.AgendamentoId == id);
                 if (ag is null)
                 {
                     return NotFound($"agendamento com id= {id} não encontrado");
@@ -85,7 +87,8 @@ namespace Barber.Api.Controllers
             }
 
 
-            var agendamentoCriado = _repository.Create(ag);
+            var agendamentoCriado = _uof.AgendamentoRepository.Create(ag);
+            _uof.Commit();
 
             return new CreatedAtRouteResult("ObterAgendamentos",
             new { id = agendamentoCriado.AgendamentoId }, agendamentoCriado);
@@ -105,7 +108,8 @@ namespace Barber.Api.Controllers
             }
 
 
-            _repository.Update(ag);
+            _uof.AgendamentoRepository.Update(ag);
+            _uof.Commit();
             return Ok(ag);
 
         }
@@ -117,14 +121,16 @@ namespace Barber.Api.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            var ag = _repository.Get(s => s.AgendamentoId == id);
+            var ag = _uof.AgendamentoRepository.Get(s => s.AgendamentoId == id);
             if (ag is null)
             {
                 return NotFound($"agendamento com id= {id} não Localizada...");
 
             }
 
-            var agendamentoExcluido = _repository.Delete(ag);
+            var agendamentoExcluido = _uof.AgendamentoRepository.Delete(ag);
+            _uof.Commit();
+
             return Ok(agendamentoExcluido);
 
         }
