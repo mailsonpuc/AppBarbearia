@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Barber.Api.Context;
+
 using Barber.Api.Models;
+using Barber.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Barber.Api.Controllers
 {
@@ -13,16 +9,15 @@ namespace Barber.Api.Controllers
     [Route("api/[controller]")]
     public class HorarioDisponivelController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        //usando o repository
+        private readonly IRepository<HorarioDisponivel> _repository;
 
         //construtor
-        public HorarioDisponivelController(AppDbContext context)
+        public HorarioDisponivelController(IRepository<HorarioDisponivel> repository)
         {
             //injetendo a dependencia
-            _context = context;
+            _repository = repository;
         }
-
-
 
 
 
@@ -33,13 +28,13 @@ namespace Barber.Api.Controllers
             try
             {
                 //throw new Exception("ocorreu um erro");
-                var horarios = _context.HorariosDisponiveis.AsNoTracking().ToList();
+                var horarios = _repository.GetAll();
                 if (horarios is null)
                 {
                     return NotFound("horarios Não encontrado");
                 }
 
-                return horarios;
+                return Ok(horarios);
 
             }
             catch (System.Exception)
@@ -59,7 +54,7 @@ namespace Barber.Api.Controllers
         {
             try
             {
-                var horario = _context.HorariosDisponiveis.AsNoTracking().FirstOrDefault(ho => ho.HorarioId == id);
+                var horario = _repository.Get(h => h.HorarioId == id);
                 if (horario is null)
                 {
                     return NotFound($"horario com id= {id} não encontrado");
@@ -91,11 +86,10 @@ namespace Barber.Api.Controllers
                 return BadRequest("Ocorreu um erro 400");
             }
 
-            _context.HorariosDisponiveis.Add(horario);
-            _context.SaveChanges();
+            var horarioCriado = _repository.Create(horario);
 
             return new CreatedAtRouteResult("ObterHorarios",
-            new { id = horario.HorarioId }, horario);
+            new { id = horarioCriado.HorarioId }, horarioCriado);
 
         }
 
@@ -110,8 +104,7 @@ namespace Barber.Api.Controllers
                 return BadRequest("Não encontrado");
             }
 
-            _context.Entry(horario).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            _context.SaveChanges();
+            _repository.Update(horario);
 
             //return NoContent();
             return Ok(horario);
@@ -123,18 +116,17 @@ namespace Barber.Api.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            var horario = _context.HorariosDisponiveis.FirstOrDefault(o => o.HorarioId == id);
+            var horario = _repository.Get(h => h.HorarioId == id);
             if (horario is null)
             {
                 return NotFound($"horario com id= {id} não Localizada...");
 
             }
 
-            _context.HorariosDisponiveis.Remove(horario);
-            _context.SaveChanges();
+            
 
-
-            return Ok($"horario com id= {id} removida");
+            var horarioExcluido = _repository.Delete(horario);
+            return Ok(horarioExcluido);
         }
 
 

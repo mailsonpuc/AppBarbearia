@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Barber.Api.Context;
+
 using Barber.Api.Models;
+using Barber.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,13 +10,14 @@ namespace Barber.Api.Controllers
     [Route("api/[controller]")]
     public class OfereceController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        //usando o repository
+        private readonly IRepository<Oferece> _repository;
 
         //construtor
-        public OfereceController(AppDbContext context)
+        public OfereceController(IRepository<Oferece> repository)
         {
             //injetendo a dependencia
-            _context = context;
+            _repository = repository;
         }
 
 
@@ -31,13 +29,13 @@ namespace Barber.Api.Controllers
             try
             {
                 //throw new Exception("ocorreu um erro");
-                var servicos = _context.Oferece.AsNoTracking().ToList();
-                if (servicos is null)
+                var ofereces = _repository.GetAll();
+                if (ofereces is null)
                 {
-                    return NotFound("servicos Não encontrado");
+                    return NotFound("ofereces Não encontrado");
                 }
 
-                return servicos;
+                return Ok(ofereces);
 
             }
             catch (System.Exception)
@@ -57,7 +55,7 @@ namespace Barber.Api.Controllers
         {
             try
             {
-                var oferece = _context.Oferece.AsNoTracking().FirstOrDefault(o => o.ServicoId == id);
+                var oferece = _repository.Get(o => o.ServicoId == id);
                 if (oferece is null)
                 {
                     return NotFound($"oferece com id= {id} não encontrado");
@@ -86,11 +84,10 @@ namespace Barber.Api.Controllers
                 return BadRequest("Ocorreu um erro 400");
             }
 
-            _context.Oferece.Add(oferece);
-            _context.SaveChanges();
+            var ofereceCriado = _repository.Create(oferece);
 
             return new CreatedAtRouteResult("ObterOferece",
-            new { id = oferece.ServicoId }, oferece);
+            new { id = ofereceCriado.ServicoId }, ofereceCriado);
 
         }
 
@@ -106,8 +103,7 @@ namespace Barber.Api.Controllers
                 return BadRequest("Não encontrado");
             }
 
-            _context.Entry(oferece).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            _context.SaveChanges();
+            _repository.Update(oferece);
 
             //return NoContent();
             return Ok(oferece);
@@ -121,18 +117,19 @@ namespace Barber.Api.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            var oferece = _context.Oferece.FirstOrDefault(c => c.ServicoId == id);
+            var oferece = _repository.Get(o => o.ServicoId == id);
             if (oferece is null)
             {
                 return NotFound($"oferece com id= {id} não Localizada...");
 
             }
 
-            _context.Oferece.Remove(oferece);
-            _context.SaveChanges();
 
 
-            return Ok($"oferece com id= {id} removida");
+
+            var ofereceExcluido = _repository.Delete(oferece);
+            return Ok(ofereceExcluido);
+
         }
 
 

@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Barber.Api.Context;
+
 using Barber.Api.Models;
+using Barber.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace Barber.Api.Controllers
 {
@@ -13,13 +10,14 @@ namespace Barber.Api.Controllers
     [Route("api/[controller]")]
     public class AvaliacaoController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        //usando o repository
+        private readonly IRepository<Avaliacao> _repository;
 
         //construtor
-        public AvaliacaoController (AppDbContext context)
+        public AvaliacaoController(IRepository<Avaliacao> repository)
         {
             //injetendo a dependencia
-            _context = context;
+            _repository = repository;
         }
 
 
@@ -31,13 +29,13 @@ namespace Barber.Api.Controllers
             try
             {
                 //throw new Exception("ocorreu um erro");
-                var avaliacoes = _context.Avaliacoes.AsNoTracking().ToList();
+                var avaliacoes = _repository.GetAll();
                 if (avaliacoes is null)
                 {
                     return NotFound("avaliacoes Não encontrado");
                 }
 
-                return avaliacoes;
+                return Ok(avaliacoes);
 
             }
             catch (System.Exception)
@@ -57,7 +55,7 @@ namespace Barber.Api.Controllers
         {
             try
             {
-                var av = _context.Avaliacoes.AsNoTracking().FirstOrDefault(o => o.AvaliacaoId == id);
+                var av = _repository.Get(a => a.AvaliacaoId == id);
                 if (av is null)
                 {
                     return NotFound($"avaliação com id= {id} não encontrado");
@@ -86,11 +84,11 @@ namespace Barber.Api.Controllers
                 return BadRequest("Ocorreu um erro 400");
             }
 
-            _context.Avaliacoes.Add(av);
-            _context.SaveChanges();
+
+            var avaliacaoCriado = _repository.Create(av);
 
             return new CreatedAtRouteResult("ObterAvaliacao",
-            new { id = av.AvaliacaoId }, av);
+            new { id = avaliacaoCriado.AvaliacaoId }, avaliacaoCriado);
 
         }
 
@@ -106,8 +104,7 @@ namespace Barber.Api.Controllers
                 return BadRequest("Não encontrado");
             }
 
-            _context.Entry(av).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            _context.SaveChanges();
+            _repository.Update(av);
 
             //return NoContent();
             return Ok(av);
@@ -121,18 +118,17 @@ namespace Barber.Api.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            var av = _context.Avaliacoes.FirstOrDefault(c => c.AvaliacaoId == id);
+            var av = _repository.Get(a => a.AvaliacaoId == id);
             if (av is null)
             {
                 return NotFound($"avaliação com id= {id} não Localizada...");
 
             }
 
-            _context.Avaliacoes.Remove(av);
-            _context.SaveChanges();
 
 
-            return Ok($"avaliação com id= {id} removida");
+            var avaliacaoExcluido = _repository.Delete(av);
+            return Ok(avaliacaoExcluido);
         }
 
 

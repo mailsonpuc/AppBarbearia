@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Barber.Api.Context;
+
 using Barber.Api.Models;
+using Barber.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace Barber.Api.Controllers
 {
@@ -13,13 +10,14 @@ namespace Barber.Api.Controllers
     [Route("api/[controller]")]
     public class AgendamentoController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        //usando o repository
+        private readonly IRepository<Agendamento> _repository;
 
         //construtor
-        public AgendamentoController(AppDbContext context)
+        public AgendamentoController(IRepository<Agendamento> repository)
         {
             //injetendo a dependencia
-            _context = context;
+            _repository = repository;
         }
 
 
@@ -31,13 +29,13 @@ namespace Barber.Api.Controllers
             try
             {
                 //throw new Exception("ocorreu um erro");
-                var agendamentos = _context.Agendamentos.AsNoTracking().ToList();
+                var agendamentos = _repository.GetAll();
                 if (agendamentos is null)
                 {
                     return NotFound("agendamentos Não encontrado");
                 }
 
-                return agendamentos;
+                return Ok(agendamentos);
 
             }
             catch (System.Exception)
@@ -57,7 +55,7 @@ namespace Barber.Api.Controllers
         {
             try
             {
-                var ag = _context.Agendamentos.AsNoTracking().FirstOrDefault(a => a.AgendamentoId == id);
+                var ag =  _repository.Get(g => g.AgendamentoId == id);
                 if (ag is null)
                 {
                     return NotFound($"agendamento com id= {id} não encontrado");
@@ -86,11 +84,11 @@ namespace Barber.Api.Controllers
                 return BadRequest("Ocorreu um erro 400");
             }
 
-            _context.Agendamentos.Add(ag);
-            _context.SaveChanges();
+
+            var agendamentoCriado = _repository.Create(ag);
 
             return new CreatedAtRouteResult("ObterAgendamentos",
-            new { id = ag.AgendamentoId }, ag);
+            new { id = agendamentoCriado.AgendamentoId }, agendamentoCriado);
 
         }
 
@@ -106,10 +104,8 @@ namespace Barber.Api.Controllers
                 return BadRequest("Não encontrado");
             }
 
-            _context.Entry(ag).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            _context.SaveChanges();
 
-            //return NoContent();
+            _repository.Update(ag);
             return Ok(ag);
 
         }
@@ -121,18 +117,16 @@ namespace Barber.Api.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            var ag = _context.Agendamentos.FirstOrDefault(c => c.AgendamentoId == id);
+            var ag = _repository.Get(s => s.AgendamentoId == id);
             if (ag is null)
             {
                 return NotFound($"agendamento com id= {id} não Localizada...");
 
             }
 
-            _context.Agendamentos.Remove(ag);
-            _context.SaveChanges();
+            var agendamentoExcluido = _repository.Delete(ag);
+            return Ok(agendamentoExcluido);
 
-
-            return Ok($"agendamento com id= {id} removida");
         }
 
 

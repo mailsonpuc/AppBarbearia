@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Barber.Api.Context;
+
 using Barber.Api.Models;
+using Barber.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace Barber.Api.Controllers
 {
@@ -13,13 +10,14 @@ namespace Barber.Api.Controllers
     [Route("api/[controller]")]
     public class ServicoController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        //usando o repository
+        private readonly IRepository<Servico> _repository;
 
         //construtor
-        public ServicoController(AppDbContext context)
+        public ServicoController(IRepository<Servico> repository)
         {
             //injetendo a dependencia
-            _context = context;
+            _repository = repository;
         }
 
 
@@ -33,13 +31,13 @@ namespace Barber.Api.Controllers
             try
             {
                 //throw new Exception("ocorreu um erro");
-                var servicos = _context.Servicos.AsNoTracking().ToList();
+                var servicos = _repository.GetAll();
                 if (servicos is null)
                 {
                     return NotFound("servicos Não encontrado");
                 }
 
-                return servicos;
+                return Ok(servicos);
 
             }
             catch (System.Exception)
@@ -60,7 +58,7 @@ namespace Barber.Api.Controllers
         {
             try
             {
-                var servico = _context.Servicos.AsNoTracking().FirstOrDefault(s => s.ServicoId == id);
+                var servico = _repository.Get(s => s.ServicoId == id);
                 if (servico is null)
                 {
                     return NotFound($"servico com id= {id} não encontrado");
@@ -90,11 +88,10 @@ namespace Barber.Api.Controllers
                 return BadRequest("Ocorreu um erro 400");
             }
 
-            _context.Servicos.Add(servico);
-            _context.SaveChanges();
+            var servicoCriado = _repository.Create(servico);
 
             return new CreatedAtRouteResult("ObterServico",
-            new { id = servico.ServicoId }, servico);
+            new { id = servicoCriado.ServicoId }, servicoCriado);
 
         }
 
@@ -110,8 +107,7 @@ namespace Barber.Api.Controllers
                 return BadRequest("Não encontrado");
             }
 
-            _context.Entry(servico).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            _context.SaveChanges();
+            _repository.Update(servico);
 
             //return NoContent();
             return Ok(servico);
@@ -124,18 +120,17 @@ namespace Barber.Api.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            var servico = _context.Servicos.FirstOrDefault(c => c.ServicoId == id);
+            var servico = _repository.Get(c => c.ServicoId == id);
             if (servico is null)
             {
                 return NotFound($"servico com id= {id} não Localizada...");
 
             }
 
-            _context.Servicos.Remove(servico);
-            _context.SaveChanges();
 
+            var servicoExcluida = _repository.Delete(servico);
+            return Ok(servicoExcluida);
 
-            return Ok($"servico com id= {id} removida");
         }
 
 
