@@ -14,9 +14,13 @@ namespace Barber.Api.Controllers
 
         private readonly IUnitOfWork _uof;
 
-        public OfereceController(IUnitOfWork uof)
+        private readonly ILogger<OfereceController> _logger;
+
+        public OfereceController(IUnitOfWork uof,
+        ILogger<OfereceController> logger)
         {
             _uof = uof;
+            _logger = logger;
         }
 
 
@@ -130,7 +134,7 @@ namespace Barber.Api.Controllers
 
 
             var ofereceExcluido = _uof.OfereceRepository.Delete(oferece);
-             _uof.Commit();
+            _uof.Commit();
             return Ok(ofereceExcluido);
 
         }

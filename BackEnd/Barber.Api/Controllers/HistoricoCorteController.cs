@@ -15,9 +15,13 @@ namespace Barber.Api.Controllers
    
         private readonly IUnitOfWork _uof;
 
-        public HistoricoCorteController(IUnitOfWork uof)
+        private readonly ILogger<HistoricoCorteController> _logger;
+
+        public HistoricoCorteController(IUnitOfWork uof,
+        ILogger<HistoricoCorteController> logger)
         {
             _uof = uof;
+            _logger = logger;
         }
 
 

@@ -12,10 +12,13 @@ namespace Barber.Api.Controllers
         //usando o repository
 
         private readonly IUnitOfWork _uof;
+        private readonly ILogger<HorarioDisponivelController> _logger;
 
-        public HorarioDisponivelController(IUnitOfWork uof)
+        public HorarioDisponivelController(IUnitOfWork uof,
+        ILogger<HorarioDisponivelController> logger)
         {
             _uof = uof;
+            _logger = logger;
         }
 
 

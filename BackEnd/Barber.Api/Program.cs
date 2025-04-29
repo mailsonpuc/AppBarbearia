@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Barber.Api.Context;
+using Barber.Api.Logging;
 using Barber.Api.Repositories;
 using Barber.Api.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -39,6 +40,13 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 //usando Unit Of work
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+
+//usando log e gravando em um txt
+builder.Logging.AddProvider(new CustomLoggerProvider(new CustomLoggerProviderConfiguration
+{
+    LogLevel = LogLevel.Information
+}));
 
 
 

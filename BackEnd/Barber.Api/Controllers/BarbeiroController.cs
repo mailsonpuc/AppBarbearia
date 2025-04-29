@@ -14,9 +14,13 @@ namespace Barber.Api.Controllers
 
         private readonly IUnitOfWork _uof;
 
-        public BarbeiroController(IUnitOfWork uof)
+        private readonly ILogger<BarbeiroController> _logger;
+
+        public BarbeiroController(IUnitOfWork uof,
+        ILogger<BarbeiroController> logger)
         {
             _uof = uof;
+            _logger = logger;
         }
 
 

@@ -1,0 +1,30 @@
+Information: 14 - Now listening on: http://localhost:5011
+Information: 0 - Application started. Press Ctrl+C to shut down.
+Information: 0 - Hosting environment: Development
+Information: 0 - Content root path: /home/euSSD/projeto/BackEnd/Barber.Api
+Warning: 3 - Failed to determine the https port for redirect.
+Information: 0 - Application is shutting down...
+Information: 14 - Now listening on: http://localhost:5011
+Information: 0 - Application started. Press Ctrl+C to shut down.
+Information: 0 - Hosting environment: Development
+Information: 0 - Content root path: /home/euSSD/projeto/BackEnd/Barber.Api
+Warning: 3 - Failed to determine the https port for redirect.
+Information: 20101 - Executed DbCommand (102ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [a].[AgendamentoId], [a].[ClienteId], [a].[HorarioId], [a].[LembreteEnviado], [a].[ServicoId], [a].[Status]
+FROM [Agendamentos] AS [a]
+Information: 20101 - Executed DbCommand (9ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [a].[AvaliacaoId], [a].[AgendamentoId], [a].[Comentario], [a].[Data], [a].[Nota]
+FROM [Avaliacoes] AS [a]
+Information: 20101 - Executed DbCommand (6ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [b].[BarbeiroId], [b].[Email], [b].[Nome], [b].[Senha], [b].[Telefone]
+FROM [Barbeiros] AS [b]
+Information: 20101 - Executed DbCommand (13ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [c].[ClienteId], [c].[DataNascimento], [c].[Email], [c].[Nome], [c].[Senha], [c].[Telefone]
+FROM [Clientes] AS [c]
+Information: 20101 - Executed DbCommand (7ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [h].[HistoricoId], [h].[AgendamentoId], [h].[Foto], [h].[Observacoes]
+FROM [HistoricosCorte] AS [h]
+Information: 20101 - Executed DbCommand (157ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [s].[ServicoId], [s].[Descricao], [s].[Nome]
+FROM [Servicos] AS [s]
+Information: 0 - Application is shutting down...

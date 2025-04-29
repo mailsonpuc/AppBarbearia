@@ -13,9 +13,13 @@ namespace Barber.Api.Controllers
         //usando o repository
         private readonly IUnitOfWork _uof;
 
-        public ClienteController(IUnitOfWork uof)
+        private readonly ILogger<ClienteController> _logger;
+
+        public ClienteController(IUnitOfWork uof, 
+        ILogger<ClienteController> logger)
         {
             _uof = uof;
+            _logger = logger;
         }
 
 

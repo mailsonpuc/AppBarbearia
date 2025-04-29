@@ -10,14 +10,17 @@ namespace Barber.Api.Controllers
     [Route("api/[controller]")]
     public class AgendamentoController : ControllerBase
     {
-        // //usando o repository
-        // private readonly IRepository<Agendamento> _repository;
+
         private readonly IUnitOfWork _uof;
 
+        private readonly ILogger<AgendamentoController> _logger;
+
         //construtor
-        public AgendamentoController(IUnitOfWork uof)
+        public AgendamentoController(IUnitOfWork uof,
+        ILogger<AgendamentoController> logger)
         {
             _uof = uof;
+            _logger = logger;
         }
 
 
