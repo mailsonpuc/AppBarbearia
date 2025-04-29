@@ -1,4 +1,6 @@
 
+using Barber.Api.DTOS;
+using Barber.Api.DTOS.Mappings;
 using Barber.Api.Models;
 using Barber.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +31,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpGet]
-        public ActionResult<IEnumerable<Servico>> Get()
+        public ActionResult<IEnumerable<ServicoDTO>> Get()
         {
             try
             {
@@ -40,7 +42,9 @@ namespace Barber.Api.Controllers
                     return NotFound("servicos Não encontrado");
                 }
 
-                return Ok(servicos);
+                var servicosDto = servicos.ToServicoDTOList();
+
+                return Ok(servicosDto);
 
             }
             catch (System.Exception)
@@ -57,7 +61,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpGet("{id:int}", Name = "ObterServico")]
-        public ActionResult<Servico> Get(int id)
+        public ActionResult<ServicoDTO> Get(int id)
         {
             try
             {
@@ -67,7 +71,9 @@ namespace Barber.Api.Controllers
                     return NotFound($"servico com id= {id} não encontrado");
                 }
 
-                return Ok(servico);
+                var servicoDto = servico.ToServicoDTO();
+
+                return Ok(servicoDto);
             }
 
             catch (System.Exception)
@@ -84,18 +90,22 @@ namespace Barber.Api.Controllers
 
 
         [HttpPost]
-        public ActionResult Post(Servico servico)
+        public ActionResult<ServicoDTO> Post(ServicoDTO servicoDto)
         {
-            if (servico is null)
+            if (servicoDto is null)
             {
                 return BadRequest("Ocorreu um erro 400");
             }
 
+
+            var servico = servicoDto.ToServico();
             var servicoCriado = _uof.ServicoRepository.Create(servico);
             _uof.Commit();
 
+            var novoServicoDto = servicoCriado.ToServicoDTO();
+
             return new CreatedAtRouteResult("ObterServico",
-            new { id = servicoCriado.ServicoId }, servicoCriado);
+            new { id = novoServicoDto.ServicoId }, novoServicoDto);
 
         }
 
@@ -104,18 +114,24 @@ namespace Barber.Api.Controllers
 
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, Servico servico)
+        public ActionResult<ServicoDTO> Put(int id, ServicoDTO servicoDto)
         {
-            if (id != servico.ServicoId)
+            if (id != servicoDto.ServicoId)
             {
                 return BadRequest("Não encontrado");
             }
 
-            _uof.ServicoRepository.Update(servico);
+            var servico = servicoDto.ToServico();
+
+            var servicoAtualizado = _uof.ServicoRepository.Update(servico);
+
             _uof.Commit();
 
-            //return NoContent();
-            return Ok(servico);
+
+
+            var servicoAtualizadoDto = servicoAtualizado.ToServicoDTO();
+
+            return Ok(servicoAtualizadoDto);
 
         }
 
@@ -123,7 +139,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        public ActionResult<ServicoDTO> Delete(int id)
         {
             var servico = _uof.ServicoRepository.Get(c => c.ServicoId == id);
             if (servico is null)
@@ -135,7 +151,12 @@ namespace Barber.Api.Controllers
 
             var servicoExcluida = _uof.ServicoRepository.Delete(servico);
             _uof.Commit();
-            return Ok(servicoExcluida);
+
+            //converte Servico para ServicoDTO
+
+            var servicoExcluidaDto = servicoExcluida.ToServicoDTO();
+            return Ok(servicoExcluidaDto);
+
 
         }
 

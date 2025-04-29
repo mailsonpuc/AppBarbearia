@@ -28,3 +28,51 @@ Information: 20101 - Executed DbCommand (157ms) [Parameters=[], CommandType='Tex
 SELECT [s].[ServicoId], [s].[Descricao], [s].[Nome]
 FROM [Servicos] AS [s]
 Information: 0 - Application is shutting down...
+Information: 14 - Now listening on: http://localhost:5011
+Information: 0 - Application started. Press Ctrl+C to shut down.
+Information: 0 - Hosting environment: Development
+Information: 0 - Content root path: /home/euSSD/projeto/BackEnd/Barber.Api
+Warning: 3 - Failed to determine the https port for redirect.
+Information: 20101 - Executed DbCommand (116ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [s].[ServicoId], [s].[Descricao], [s].[Nome]
+FROM [Servicos] AS [s]
+Information: 20101 - Executed DbCommand (82ms) [Parameters=[@p0='?' (Size = 300), @p1='?' (Size = 100)], CommandType='Text', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Servicos] ([Descricao], [Nome])
+OUTPUT INSERTED.[ServicoId]
+VALUES (@p0, @p1);
+Information: 20101 - Executed DbCommand (7ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [s].[ServicoId], [s].[Descricao], [s].[Nome]
+FROM [Servicos] AS [s]
+Information: 20101 - Executed DbCommand (10ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+SELECT TOP(1) [s].[ServicoId], [s].[Descricao], [s].[Nome]
+FROM [Servicos] AS [s]
+WHERE [s].[ServicoId] = @__id_0
+Information: 20101 - Executed DbCommand (4ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+SELECT TOP(1) [s].[ServicoId], [s].[Descricao], [s].[Nome]
+FROM [Servicos] AS [s]
+WHERE [s].[ServicoId] = @__id_0
+Information: 20101 - Executed DbCommand (13ms) [Parameters=[@p2='?' (DbType = Int32), @p0='?' (Size = 300), @p1='?' (Size = 100)], CommandType='Text', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Servicos] SET [Descricao] = @p0, [Nome] = @p1
+OUTPUT 1
+WHERE [ServicoId] = @p2;
+Information: 20101 - Executed DbCommand (12ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [s].[ServicoId], [s].[Descricao], [s].[Nome]
+FROM [Servicos] AS [s]
+Information: 20101 - Executed DbCommand (3ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+SELECT TOP(1) [s].[ServicoId], [s].[Descricao], [s].[Nome]
+FROM [Servicos] AS [s]
+WHERE [s].[ServicoId] = @__id_0
+Information: 20101 - Executed DbCommand (19ms) [Parameters=[@p0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+DELETE FROM [Servicos]
+OUTPUT 1
+WHERE [ServicoId] = @p0;
+Information: 20101 - Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [s].[ServicoId], [s].[Descricao], [s].[Nome]
+FROM [Servicos] AS [s]
+Information: 0 - Application is shutting down...
