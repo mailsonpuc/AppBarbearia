@@ -76,3 +76,16 @@ Information: 20101 - Executed DbCommand (3ms) [Parameters=[], CommandType='Text'
 SELECT [s].[ServicoId], [s].[Descricao], [s].[Nome]
 FROM [Servicos] AS [s]
 Information: 0 - Application is shutting down...
+Information: 14 - Now listening on: http://localhost:5011
+Information: 0 - Application started. Press Ctrl+C to shut down.
+Information: 0 - Hosting environment: Development
+Information: 0 - Content root path: /home/euSSD/AppBarbearia/BackEnd/Barber.Api
+Warning: 3 - Failed to determine the https port for redirect.
+Information: 20101 - Executed DbCommand (159ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [o].[BarbeiroId], [o].[ServicoId], [o].[Duracao], [o].[IdBarbeiro], [o].[IdServico], [o].[Preco]
+FROM [Oferece] AS [o]
+Information: 20101 - Executed DbCommand (126ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+SELECT TOP(1) [o].[BarbeiroId], [o].[ServicoId], [o].[Duracao], [o].[IdBarbeiro], [o].[IdServico], [o].[Preco]
+FROM [Oferece] AS [o]
+WHERE [o].[ServicoId] = @__id_0
+Information: 0 - Application is shutting down...

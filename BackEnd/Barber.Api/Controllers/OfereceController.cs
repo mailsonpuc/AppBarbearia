@@ -1,4 +1,6 @@
 
+using Barber.Api.DTOS;
+using Barber.Api.DTOS.Mappings;
 using Barber.Api.Models;
 using Barber.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +30,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpGet]
-        public ActionResult<IEnumerable<Oferece>> Get()
+        public ActionResult<IEnumerable<OfereceDTO>> Get()
         {
             try
             {
@@ -39,7 +41,9 @@ namespace Barber.Api.Controllers
                     return NotFound("ofereces Não encontrado");
                 }
 
-                return Ok(ofereces);
+                var oferecesDto = ofereces.ToOfereceDTOList();
+
+                return Ok(oferecesDto);
 
             }
             catch (System.Exception)
@@ -55,7 +59,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpGet("{id:int}", Name = "ObterOferece")]
-        public ActionResult<Oferece> Get(int id)
+        public ActionResult<OfereceDTO> Get(int id)
         {
             try
             {
@@ -65,7 +69,8 @@ namespace Barber.Api.Controllers
                     return NotFound($"oferece com id= {id} não encontrado");
                 }
 
-                return Ok(oferece);
+                var ofereceDto = oferece.ToOfereceDTO();
+                return Ok(ofereceDto);
             }
 
             catch (System.Exception)
@@ -81,18 +86,21 @@ namespace Barber.Api.Controllers
 
 
         [HttpPost]
-        public ActionResult Post(Oferece oferece)
+        public ActionResult<OfereceDTO> Post(OfereceDTO ofereceDto)
         {
-            if (oferece is null)
+            if (ofereceDto is null)
             {
                 return BadRequest("Ocorreu um erro 400");
             }
 
+            var oferece = ofereceDto.ToOferece();
             var ofereceCriado = _uof.OfereceRepository.Create(oferece);
             _uof.Commit();
 
+            var novoOfereceDto = ofereceCriado.ToOfereceDTO();
+
             return new CreatedAtRouteResult("ObterOferece",
-            new { id = ofereceCriado.ServicoId }, ofereceCriado);
+            new { id = novoOfereceDto.ServicoId }, novoOfereceDto);
 
         }
 
@@ -101,18 +109,20 @@ namespace Barber.Api.Controllers
 
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, Oferece oferece)
+        public ActionResult<OfereceDTO> Put(int id, OfereceDTO ofereceDto)
         {
-            if (id != oferece.ServicoId)
+            if (id != ofereceDto.ServicoId)
             {
                 return BadRequest("Não encontrado");
             }
 
-            _uof.OfereceRepository.Update(oferece);
+            var oferece = ofereceDto.ToOferece();
+
+            var ofereceAtualizado = _uof.OfereceRepository.Update(oferece);
             _uof.Commit();
 
             //return NoContent();
-            return Ok(oferece);
+            return Ok(ofereceAtualizado);
 
         }
 
@@ -121,7 +131,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        public ActionResult<OfereceDTO> Delete(int id)
         {
             var oferece = _uof.OfereceRepository.Get(o => o.ServicoId == id);
             if (oferece is null)
@@ -134,7 +144,7 @@ namespace Barber.Api.Controllers
 
 
             var ofereceExcluido = _uof.OfereceRepository.Delete(oferece);
-            _uof.Commit();
+          
             return Ok(ofereceExcluido);
 
         }

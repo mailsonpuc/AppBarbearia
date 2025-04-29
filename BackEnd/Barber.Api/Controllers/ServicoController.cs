@@ -155,6 +155,7 @@ namespace Barber.Api.Controllers
             //converte Servico para ServicoDTO
 
             var servicoExcluidaDto = servicoExcluida.ToServicoDTO();
+            
             return Ok(servicoExcluidaDto);
 
 
