@@ -1,4 +1,6 @@
 
+using Barber.Api.DTOS;
+using Barber.Api.DTOS.Mappings;
 using Barber.Api.Models;
 using Barber.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +31,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpGet]
-        public ActionResult<IEnumerable<Agendamento>> Get()
+        public ActionResult<IEnumerable<AgendamentoDTO>> Get()
         {
             try
             {
@@ -40,7 +42,9 @@ namespace Barber.Api.Controllers
                     return NotFound("agendamentos Não encontrado");
                 }
 
-                return Ok(agendamentos);
+                var agendamentosDto = agendamentos.ToAgendamentoDTOList();
+
+                return Ok(agendamentosDto);
 
             }
             catch (System.Exception)
@@ -56,17 +60,20 @@ namespace Barber.Api.Controllers
 
 
         [HttpGet("{id:int}", Name = "ObterAgendamentos")]
-        public ActionResult<Oferece> Get(int id)
+        public ActionResult<AgendamentoDTO> Get(int id)
         {
             try
             {
-                var ag = _uof.AgendamentoRepository.Get(g => g.AgendamentoId == id);
-                if (ag is null)
+                var agendamento = _uof.AgendamentoRepository.Get(g => g.AgendamentoId == id);
+                if (agendamento is null)
                 {
                     return NotFound($"agendamento com id= {id} não encontrado");
                 }
 
-                return Ok(ag);
+
+                var agendamentoDto = agendamento.ToAgendamentoDTO();
+
+                return Ok(agendamentoDto);
             }
 
             catch (System.Exception)
@@ -82,19 +89,22 @@ namespace Barber.Api.Controllers
 
 
         [HttpPost]
-        public ActionResult Post(Agendamento ag)
+        public ActionResult<AgendamentoDTO> Post(AgendamentoDTO agendamentoDto)
         {
-            if (ag is null)
+            if (agendamentoDto is null)
             {
                 return BadRequest("Ocorreu um erro 400");
             }
 
 
-            var agendamentoCriado = _uof.AgendamentoRepository.Create(ag);
+            var agendamento = agendamentoDto.ToAgendamento();
+            var agendamentoCriado = _uof.AgendamentoRepository.Create(agendamento);
             _uof.Commit();
 
+            var novoAgendamentoDto = agendamentoCriado.ToAgendamentoDTO();
+
             return new CreatedAtRouteResult("ObterAgendamentos",
-            new { id = agendamentoCriado.AgendamentoId }, agendamentoCriado);
+            new { id = novoAgendamentoDto.AgendamentoId }, novoAgendamentoDto);
 
         }
 
@@ -103,17 +113,21 @@ namespace Barber.Api.Controllers
 
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, Agendamento ag)
+        public ActionResult<AgendamentoDTO> Put(int id, AgendamentoDTO agendamentoDto)
         {
-            if (id != ag.AgendamentoId)
+            if (id != agendamentoDto.AgendamentoId)
             {
                 return BadRequest("Não encontrado");
             }
 
 
-            _uof.AgendamentoRepository.Update(ag);
+            var agendamento = agendamentoDto.ToAgendamento();
+            var agendamentoAtualizado = _uof.AgendamentoRepository.Update(agendamento);
             _uof.Commit();
-            return Ok(ag);
+
+            var agendamentoAtualizadoDto = agendamentoAtualizado.ToAgendamentoDTO();
+
+            return Ok(agendamentoAtualizadoDto);
 
         }
 
@@ -122,19 +136,21 @@ namespace Barber.Api.Controllers
 
 
         [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        public ActionResult<AgendamentoDTO> Delete(int id)
         {
-            var ag = _uof.AgendamentoRepository.Get(s => s.AgendamentoId == id);
-            if (ag is null)
+            var agendamento = _uof.AgendamentoRepository.Get(s => s.AgendamentoId == id);
+            if (agendamento is null)
             {
                 return NotFound($"agendamento com id= {id} não Localizada...");
 
             }
 
-            var agendamentoExcluido = _uof.AgendamentoRepository.Delete(ag);
+            var agendamentoExcluido = _uof.AgendamentoRepository.Delete(agendamento);
             _uof.Commit();
 
-            return Ok(agendamentoExcluido);
+            var agendamentoExcluidoDto = agendamentoExcluido.ToAgendamentoDTO();
+
+            return Ok(agendamentoExcluidoDto);
 
         }
 
