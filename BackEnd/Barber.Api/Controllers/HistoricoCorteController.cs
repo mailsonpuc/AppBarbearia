@@ -1,5 +1,7 @@
 
 
+using Barber.Api.DTOS;
+using Barber.Api.DTOS.Mappings;
 using Barber.Api.Models;
 using Barber.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +14,7 @@ namespace Barber.Api.Controllers
     public class HistoricoCorteController : ControllerBase
     {
         //usando o repository
-   
+
         private readonly IUnitOfWork _uof;
 
         private readonly ILogger<HistoricoCorteController> _logger;
@@ -32,7 +34,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpGet]
-        public ActionResult<IEnumerable<HistoricoCorte>> Get()
+        public ActionResult<IEnumerable<HistoricoCorteDTO>> Get()
         {
             try
             {
@@ -43,7 +45,10 @@ namespace Barber.Api.Controllers
                     return NotFound("historicos Não encontrado");
                 }
 
-                return Ok(historicos);
+                var historicoDto = historicos.ToHistoricoCorteDTOList();
+
+                return Ok(historicoDto);
+
 
             }
             catch (System.Exception)
@@ -59,7 +64,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpGet("{id:int}", Name = "Obterhistorico")]
-        public ActionResult<HistoricoCorte> Get(int id)
+        public ActionResult<HistoricoCorteDTO> Get(int id)
         {
             try
             {
@@ -69,7 +74,10 @@ namespace Barber.Api.Controllers
                     return NotFound($"historico com id= {id} não encontrado");
                 }
 
-                return Ok(historico);
+
+                var historicoDto = historico.ToHistoricoCorteDTO();
+
+                return Ok(historicoDto);
             }
 
             catch (System.Exception)
@@ -85,18 +93,22 @@ namespace Barber.Api.Controllers
 
 
         [HttpPost]
-        public ActionResult Post(HistoricoCorte historico)
+        public ActionResult<HistoricoCorteDTO> Post(HistoricoCorteDTO historicoDto)
         {
-            if (historico is null)
+            if (historicoDto is null)
             {
                 return BadRequest("Ocorreu um erro 400");
             }
 
+
+            var historico = historicoDto.ToHistoricoCorte();
             var historicoCriado = _uof.HistoricoCorteRepository.Create(historico);
             _uof.Commit();
 
+            var novoHistoricoDto = historicoCriado.ToHistoricoCorteDTO();
+
             return new CreatedAtRouteResult("Obterhistorico",
-            new { id = historicoCriado.HistoricoId }, historicoCriado);
+            new { id = novoHistoricoDto.HistoricoId }, novoHistoricoDto);
 
         }
 
@@ -105,15 +117,23 @@ namespace Barber.Api.Controllers
 
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, HistoricoCorte historico)
+        public ActionResult<HistoricoCorteDTO> Put(int id, HistoricoCorteDTO historicoDto)
         {
-            if (id != historico.HistoricoId)
+            if (id != historicoDto.HistoricoId)
             {
                 return BadRequest("Não encontrado");
+
             }
-            _uof.HistoricoCorteRepository.Update(historico);
+
+             var historico = historicoDto.ToHistoricoCorte();
+
+            var historicoAtualizado = _uof.HistoricoCorteRepository.Update(historico);
             _uof.Commit();
-            return Ok(historico);
+
+
+            var historicoAtualizadoDto = historicoAtualizado.ToHistoricoCorteDTO();
+
+            return Ok(historicoAtualizadoDto);
 
         }
 
@@ -122,7 +142,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        public ActionResult<HistoricoCorteDTO> Delete(int id)
         {
             var historico = _uof.HistoricoCorteRepository.Get(h => h.HistoricoId == id);
             if (historico is null)
@@ -134,7 +154,11 @@ namespace Barber.Api.Controllers
 
             var historicoExcluido = _uof.HistoricoCorteRepository.Delete(historico);
             _uof.Commit();
-            return Ok(historicoExcluido);
+
+
+            var historicoExcluidoDto = historicoExcluido.ToHistoricoCorteDTO();
+
+            return Ok(historicoExcluidoDto);
         }
 
 

@@ -26,6 +26,8 @@ namespace Barber.Api.DTOS.Mappings
 
 
 
+     
+
         public static HistoricoCorte? ToHistoricoCorte(this HistoricoCorteDTO historicoCorteDto)
         {
             if (historicoCorteDto is null)
@@ -47,10 +49,11 @@ namespace Barber.Api.DTOS.Mappings
 
 
 
+    
 
 
 
-        public static IEnumerable<HistoricoCorteDTO> ToHistoricoCorteDTOList(this IEnumerable<HistoricoCorteDTO> historicoCortes)
+        public static IEnumerable<HistoricoCorteDTO> ToHistoricoCorteDTOList(this IEnumerable<HistoricoCorte> historicoCortes)
         {
 
             if (historicoCortes is null || !historicoCortes.Any())
