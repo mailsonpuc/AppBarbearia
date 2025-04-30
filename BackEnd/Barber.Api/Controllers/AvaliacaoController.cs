@@ -1,4 +1,6 @@
 
+using Barber.Api.DTOS;
+using Barber.Api.DTOS.Mappings;
 using Barber.Api.Models;
 using Barber.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +28,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpGet]
-        public ActionResult<IEnumerable<Avaliacao>> Get()
+        public ActionResult<IEnumerable<AvaliacaoDTO>> Get()
         {
             try
             {
@@ -37,7 +39,9 @@ namespace Barber.Api.Controllers
                     return NotFound("avaliacoes Não encontrado");
                 }
 
-                return Ok(avaliacoes);
+                var avaliacoesDto = avaliacoes.ToAvaliacaoDTOList();
+
+                return Ok(avaliacoesDto);
 
             }
             catch (System.Exception)
@@ -53,17 +57,19 @@ namespace Barber.Api.Controllers
 
 
         [HttpGet("{id:int}", Name = "ObterAvaliacao")]
-        public ActionResult<Oferece> Get(int id)
+        public ActionResult<AvaliacaoDTO> Get(int id)
         {
             try
             {
-                var av = _uof.AvaliacaoRepository.Get(a => a.AvaliacaoId == id);
-                if (av is null)
+                var avaliacao = _uof.AvaliacaoRepository.Get(a => a.AvaliacaoId == id);
+                if (avaliacao is null)
                 {
                     return NotFound($"avaliação com id= {id} não encontrado");
                 }
 
-                return Ok(av);
+                var avaliacaoDto = avaliacao.ToAvaliacaoDTO();
+
+                return Ok(avaliacaoDto);
             }
 
             catch (System.Exception)
@@ -79,19 +85,21 @@ namespace Barber.Api.Controllers
 
 
         [HttpPost]
-        public ActionResult Post(Avaliacao av)
+        public ActionResult<AvaliacaoDTO> Post(AvaliacaoDTO avaliacaoDto)
         {
-            if (av is null)
+            if (avaliacaoDto is null)
             {
                 return BadRequest("Ocorreu um erro 400");
             }
 
-
-            var avaliacaoCriado = _uof.AvaliacaoRepository.Create(av);
+            var avaliacao = avaliacaoDto.ToAvaliacao();
+            var avaliacaoCriado = _uof.AvaliacaoRepository.Create(avaliacao);
             _uof.Commit();
 
+            var novaAvaliacaoDto = avaliacaoCriado.ToAvaliacaoDTO();
+
             return new CreatedAtRouteResult("ObterAvaliacao",
-            new { id = avaliacaoCriado.AvaliacaoId }, avaliacaoCriado);
+            new { id = novaAvaliacaoDto.AvaliacaoId }, novaAvaliacaoDto);
 
         }
 
@@ -100,19 +108,23 @@ namespace Barber.Api.Controllers
 
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, Avaliacao av)
+        public ActionResult<AvaliacaoDTO> Put(int id, AvaliacaoDTO avaliacaoDto)
         {
-            if (id != av.AvaliacaoId)
+            if (id != avaliacaoDto.AvaliacaoId)
             {
                 return BadRequest("Não encontrado");
             }
 
-            _uof.AvaliacaoRepository.Update(av);
+
+            var avaliacao = avaliacaoDto.ToAvaliacao();
+            var avaliacaoAtualizado = _uof.AvaliacaoRepository.Update(avaliacao);
             _uof.Commit();
 
-            //return NoContent();
-            return Ok(av);
 
+
+            var avaliacaoAtualizadoDto = avaliacaoAtualizado.ToAvaliacaoDTO();
+
+            return Ok(avaliacaoAtualizadoDto);
         }
 
 
@@ -120,10 +132,10 @@ namespace Barber.Api.Controllers
 
 
         [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        public ActionResult<AvaliacaoDTO> Delete(int id)
         {
-            var av = _uof.AvaliacaoRepository.Get(a => a.AvaliacaoId == id);
-            if (av is null)
+            var avaliacao = _uof.AvaliacaoRepository.Get(a => a.AvaliacaoId == id);
+            if (avaliacao is null)
             {
                 return NotFound($"avaliação com id= {id} não Localizada...");
 
@@ -131,9 +143,14 @@ namespace Barber.Api.Controllers
 
 
 
-            var avaliacaoExcluido = _uof.AvaliacaoRepository.Delete(av);
+            var avaliacaoExcluido = _uof.AvaliacaoRepository.Delete(avaliacao);
             _uof.Commit();
-            return Ok(avaliacaoExcluido);
+
+
+            var avaliacaoExcluidaDto = avaliacaoExcluido.ToAvaliacaoDTO();
+
+            return Ok(avaliacaoExcluidaDto);
+
         }
 
 

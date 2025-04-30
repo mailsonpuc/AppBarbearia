@@ -28,6 +28,8 @@ namespace Barber.Api.DTOS.Mappings
 
 
 
+
+
         public static Avaliacao? ToAvaliacao(this AvaliacaoDTO avaliacaoDto)
         {
             if (avaliacaoDto is null)
@@ -49,7 +51,9 @@ namespace Barber.Api.DTOS.Mappings
 
 
 
-        public static IEnumerable<AvaliacaoDTO> ToAvaliacaoDTOList(this IEnumerable<AvaliacaoDTO> avaliacaos)
+
+
+        public static IEnumerable<AvaliacaoDTO> ToAvaliacaoDTOList(this IEnumerable<Avaliacao> avaliacaos)
         {
 
             if (avaliacaos is null || !avaliacaos.Any())
