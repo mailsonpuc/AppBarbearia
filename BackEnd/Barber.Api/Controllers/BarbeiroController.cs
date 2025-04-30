@@ -1,4 +1,6 @@
 
+using Barber.Api.DTOS;
+using Barber.Api.DTOS.Mappings;
 using Barber.Api.Models;
 using Barber.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +32,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpGet]
-        public ActionResult<IEnumerable<Barbeiro>> Get()
+        public ActionResult<IEnumerable<BarbeiroDTO>> Get()
         {
             try
             {
@@ -41,7 +43,9 @@ namespace Barber.Api.Controllers
                     return NotFound("barbeiros Não encontrado");
                 }
 
-                return Ok(barbeiros);
+                var barbeirosDto = barbeiros.ToBarbeiroDTOList();
+
+                return Ok(barbeirosDto);
 
             }
             catch (System.Exception)
@@ -57,7 +61,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpGet("{id:int}", Name = "ObterBarbeiro")]
-        public ActionResult<Barbeiro> Get(int id)
+        public ActionResult<BarbeiroDTO> Get(int id)
         {
             try
             {
@@ -67,7 +71,9 @@ namespace Barber.Api.Controllers
                     return NotFound($"barbeiro com id= {id} não encontrado");
                 }
 
-                return Ok(barbeiro);
+                var barbeirosDto = barbeiro.ToBarbeiroDTO();
+
+                return Ok(barbeirosDto);
             }
 
             catch (System.Exception)
@@ -83,18 +89,21 @@ namespace Barber.Api.Controllers
 
 
         [HttpPost]
-        public ActionResult Post(Barbeiro barbeiro)
+        public ActionResult<BarbeiroDTO> Post(BarbeiroDTO barbeiroDto)
         {
-            if (barbeiro is null)
+            if (barbeiroDto is null)
             {
                 return BadRequest("Ocorreu um erro 400");
             }
 
+            var barbeiro = barbeiroDto.ToBarbeiro();
             var barbeiroCriado = _uof.BarbeiroRepository.Create(barbeiro);
             _uof.Commit();
 
+            var novoBarbeiroDto = barbeiroCriado.ToBarbeiroDTO();
+
             return new CreatedAtRouteResult("ObterBarbeiro",
-            new { id = barbeiroCriado.BarbeiroId }, barbeiroCriado);
+            new { id = novoBarbeiroDto.BarbeiroId }, novoBarbeiroDto);
 
         }
 
@@ -103,17 +112,21 @@ namespace Barber.Api.Controllers
 
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, Barbeiro barbeiro)
+        public ActionResult<BarbeiroDTO> Put(int id, BarbeiroDTO barbeiroDto)
         {
-            if (id != barbeiro.BarbeiroId)
+            if (id != barbeiroDto.BarbeiroId)
             {
                 return BadRequest("Não encontrado");
             }
 
 
-            _uof.BarbeiroRepository.Update(barbeiro);
+            var barbeiro = barbeiroDto.ToBarbeiro();
+            var barbeiroAtualizado = _uof.BarbeiroRepository.Update(barbeiro);
             _uof.Commit();
-            return Ok(barbeiro);
+
+            var barbeiroAtualizadoDto = barbeiroAtualizado.ToBarbeiroDTO();
+
+            return Ok(barbeiroAtualizadoDto);
 
         }
 
@@ -122,7 +135,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        public ActionResult<BarbeiroDTO> Delete(int id)
         {
             var barbeiro = _uof.BarbeiroRepository.Get(x => x.BarbeiroId == id);
             if (barbeiro is null)
@@ -134,7 +147,11 @@ namespace Barber.Api.Controllers
 
             var barbeiroExcluido = _uof.BarbeiroRepository.Delete(barbeiro);
             _uof.Commit();
-            return Ok(barbeiroExcluido);
+
+
+            var barbeiroExcluidoDto = barbeiroExcluido.ToBarbeiroDTO();
+
+            return Ok(barbeiroExcluidoDto);
 
         }
 

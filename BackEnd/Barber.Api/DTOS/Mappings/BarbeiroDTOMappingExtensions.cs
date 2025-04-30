@@ -51,9 +51,10 @@ namespace Barber.Api.DTOS.Mappings
 
 
 
+     
 
 
-        public static IEnumerable<BarbeiroDTO> ToBarbeiroDTOList(this IEnumerable<BarbeiroDTO> barbeiros)
+        public static IEnumerable<BarbeiroDTO> ToBarbeiroDTOList(this IEnumerable<Barbeiro> barbeiros)
         {
 
             if (barbeiros is null || !barbeiros.Any())
