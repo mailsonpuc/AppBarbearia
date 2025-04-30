@@ -54,7 +54,9 @@ namespace Barber.Api.DTOS.Mappings
 
 
 
-        public static IEnumerable<ClienteDTO> ToClienteDTOList(this IEnumerable<ClienteDTO> clientes)
+
+
+        public static IEnumerable<ClienteDTO> ToClienteDTOList(this IEnumerable<Cliente> clientes)
         {
 
             if (clientes is null || !clientes.Any())

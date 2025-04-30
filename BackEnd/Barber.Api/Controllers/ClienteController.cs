@@ -1,4 +1,6 @@
 
+using Barber.Api.DTOS;
+using Barber.Api.DTOS.Mappings;
 using Barber.Api.Models;
 using Barber.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +17,7 @@ namespace Barber.Api.Controllers
 
         private readonly ILogger<ClienteController> _logger;
 
-        public ClienteController(IUnitOfWork uof, 
+        public ClienteController(IUnitOfWork uof,
         ILogger<ClienteController> logger)
         {
             _uof = uof;
@@ -27,7 +29,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpGet]
-        public ActionResult<IEnumerable<Cliente>> Get()
+        public ActionResult<IEnumerable<ClienteDTO>> Get()
         {
             try
             {
@@ -38,7 +40,9 @@ namespace Barber.Api.Controllers
                     return NotFound("clientes Não encontrado");
                 }
 
-                return Ok(clientes);
+                var clientesDto = clientes.ToClienteDTOList();
+
+                return Ok(clientesDto);
 
             }
             catch (System.Exception)
@@ -57,7 +61,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpGet("{id:int}", Name = "ObterCliente")]
-        public ActionResult<Cliente> Get(int id)
+        public ActionResult<ClienteDTO> Get(int id)
         {
             try
             {
@@ -67,7 +71,9 @@ namespace Barber.Api.Controllers
                     return NotFound($"cliente com id= {id} não encontrado");
                 }
 
-                return Ok(cliente);
+                var clienteDto = cliente.ToClienteDTO();
+
+                return Ok(clienteDto);
             }
 
             catch (System.Exception)
@@ -83,18 +89,22 @@ namespace Barber.Api.Controllers
 
 
         [HttpPost]
-        public ActionResult Post(Cliente cliente)
+        public ActionResult<ClienteDTO> Post(ClienteDTO clienteDto)
         {
-            if (cliente is null)
+            if (clienteDto is null)
             {
                 return BadRequest("Ocorreu um erro 400");
             }
 
+            var cliente = clienteDto.ToCliente();
+
             var clienteCriado = _uof.ClienteRepository.Create(cliente);
             _uof.Commit();
 
+            var novoClienteDto = clienteCriado.ToClienteDTO();
+
             return new CreatedAtRouteResult("ObterCliente",
-            new { id = clienteCriado.ClienteId }, clienteCriado);
+            new { id = novoClienteDto.ClienteId }, novoClienteDto);
 
         }
 
@@ -103,16 +113,23 @@ namespace Barber.Api.Controllers
 
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, Cliente cliente)
+        public ActionResult<ClienteDTO> Put(int id, ClienteDTO clienteDto)
         {
-            if (id != cliente.ClienteId)
+            if (id != clienteDto.ClienteId)
             {
                 return BadRequest("Não encontrado");
             }
 
-            _uof.ClienteRepository.Update(cliente);
+            var cliente = clienteDto.ToCliente();
+            var clienteAtualizado = _uof.ClienteRepository.Update(cliente);
             _uof.Commit();
-            return Ok(cliente);
+
+
+
+
+            var clienteAtualizadoDto = clienteAtualizado.ToClienteDTO();
+
+            return Ok(clienteAtualizadoDto);
 
         }
 
@@ -121,7 +138,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        public ActionResult<ClienteDTO> Delete(int id)
         {
             var cliente = _uof.ClienteRepository.Get(c => c.ClienteId == id);
             if (cliente is null)
@@ -134,7 +151,11 @@ namespace Barber.Api.Controllers
 
             var clienteExcluido = _uof.ClienteRepository.Delete(cliente);
             _uof.Commit();
-            return Ok(clienteExcluido);
+
+
+            var clienteExcluidoDto = clienteExcluido.ToClienteDTO();
+
+            return Ok(clienteExcluidoDto);
 
         }
 
