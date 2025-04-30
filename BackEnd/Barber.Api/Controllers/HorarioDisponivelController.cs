@@ -1,4 +1,6 @@
 
+using Barber.Api.DTOS;
+using Barber.Api.DTOS.Mappings;
 using Barber.Api.Models;
 using Barber.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +27,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpGet]
-        public ActionResult<IEnumerable<HorarioDisponivel>> Get()
+        public ActionResult<IEnumerable<HorarioDisponivelDTO>> Get()
         {
             try
             {
@@ -36,7 +38,9 @@ namespace Barber.Api.Controllers
                     return NotFound("horarios Não encontrado");
                 }
 
-                return Ok(horarios);
+                var horarioDisponielDto = horarios.ToHorarioDisponivelDTOList();
+
+                return Ok(horarioDisponielDto);
 
             }
             catch (System.Exception)
@@ -52,7 +56,7 @@ namespace Barber.Api.Controllers
 
 
         [HttpGet("{id:int}", Name = "ObterHorarios")]
-        public ActionResult<Oferece> Get(int id)
+        public ActionResult<HorarioDisponivelDTO> Get(int id)
         {
             try
             {
@@ -62,7 +66,9 @@ namespace Barber.Api.Controllers
                     return NotFound($"horario com id= {id} não encontrado");
                 }
 
-                return Ok(horario);
+                var horarioDto = horario.ToHorarioDisponivelDTO();
+
+                return Ok(horarioDto);
             }
 
             catch (System.Exception)
@@ -81,18 +87,23 @@ namespace Barber.Api.Controllers
 
 
         [HttpPost]
-        public ActionResult Post(HorarioDisponivel horario)
+        public ActionResult Post(HorarioDisponivelDTO horarioDto)
         {
-            if (horario is null)
+            if (horarioDto is null)
             {
                 return BadRequest("Ocorreu um erro 400");
             }
 
+            var horario = horarioDto.ToHorarioDisponivel();
+
             var horarioCriado = _uof.HorarioDisponivelRepository.Create(horario);
             _uof.Commit();
 
+
+            var novoHorarioDto = horarioCriado.ToHorarioDisponivelDTO();
+
             return new CreatedAtRouteResult("ObterHorarios",
-            new { id = horarioCriado.HorarioId }, horarioCriado);
+            new { id = novoHorarioDto.HorarioId }, novoHorarioDto);
 
         }
 
@@ -100,24 +111,31 @@ namespace Barber.Api.Controllers
 
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, HorarioDisponivel horario)
+        public ActionResult<HorarioDisponivelDTO> Put(int id, HorarioDisponivelDTO horarioDto)
         {
-            if (id != horario.HorarioId)
+            if (id != horarioDto.HorarioId)
             {
                 return BadRequest("Não encontrado");
             }
 
-            _uof.HorarioDisponivelRepository.Update(horario);
+
+            var horario = horarioDto.ToHorarioDisponivel();
+
+            var horarioAtualizado = _uof.HorarioDisponivelRepository.Update(horario);
             _uof.Commit();
             //return NoContent();
-            return Ok(horario);
+
+
+            var horarioAtualizadoDto = horarioAtualizado.ToHorarioDisponivelDTO();
+
+            return Ok(horarioAtualizadoDto);
 
         }
 
 
 
         [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        public ActionResult<HorarioDisponivelDTO> Delete(int id)
         {
             var horario = _uof.HorarioDisponivelRepository.Get(h => h.HorarioId == id);
             if (horario is null)
@@ -130,7 +148,12 @@ namespace Barber.Api.Controllers
 
             var horarioExcluido = _uof.HorarioDisponivelRepository.Delete(horario);
             _uof.Commit();
-            return Ok(horarioExcluido);
+
+
+            var horarioExcluidaDto = horarioExcluido.ToHorarioDisponivelDTO();
+
+            return Ok(horarioExcluidaDto);
+
         }
 
 
