@@ -152,3 +152,12 @@ SELECT [a].[AgendamentoId], [a].[ClienteId], [a].[HorarioId], [a].[LembreteEnvia
 FROM [Agendamentos] AS [a]
 Critical: 0 - Esta Puxando tudo, pode travar o servidor se tiver muitos dados
 Information: 0 - Application is shutting down...
+Information: 14 - Now listening on: http://localhost:5011
+Information: 0 - Application started. Press Ctrl+C to shut down.
+Information: 0 - Hosting environment: Development
+Information: 0 - Content root path: /home/euSSD/AppBarbearia/BackEnd/Barber.Api
+Warning: 3 - Failed to determine the https port for redirect.
+Information: 20101 - Executed DbCommand (100ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [a].[AgendamentoId], [a].[ClienteId], [a].[HorarioId], [a].[LembreteEnviado], [a].[ServicoId], [a].[Status]
+FROM [Agendamentos] AS [a]
+Information: 0 - Application is shutting down...

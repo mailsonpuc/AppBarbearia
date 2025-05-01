@@ -10,11 +10,11 @@ namespace Barber.Api.Repositories.Interfaces
 
         T? Get(Expression<Func<T, bool>> predicate);
 
-        T Create(T entity);
+        T? Create(T entity);
 
-        T Update(T entity);
+        T? Update(T entity);
 
-        T Delete(T entity);
+        T? Delete(T entity);
 
 
     }

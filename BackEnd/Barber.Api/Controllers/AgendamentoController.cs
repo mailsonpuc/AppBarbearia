@@ -2,6 +2,7 @@
 using Barber.Api.DTOS;
 using Barber.Api.DTOS.Mappings;
 using Barber.Api.Models;
+using Barber.Api.Pagination;
 using Barber.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,13 +44,32 @@ namespace Barber.Api.Controllers
 
             var agendamentosDto = agendamentos.ToAgendamentoDTOList();
             _logger.LogCritical("Usario Esta Puxando tudo, pode travar o servidor se tiver muitos dados");
-           
+
 
             return Ok(agendamentosDto);
 
 
 
         }
+
+
+
+
+
+        [HttpGet("pagination")]
+        public ActionResult<IEnumerable<AgendamentoDTO>> Get([FromQuery] AgendamentosParameters agendamentosParameters)
+        {
+            // Obtém a lista de agendamentos do repositório
+            var agendamentos = _uof.AgendamentoRepository.GetAgendamentos(agendamentosParameters);
+
+            // Converte a lista de Agendamentos em uma lista de AgendamentoDTO usando a extensão
+            var agendamentosDto = agendamentos.ToAgendamentoDTOList();
+            _logger.LogWarning("Usuario esta usando a pagination");
+
+            return Ok(agendamentosDto);
+        }
+
+
 
 
 
