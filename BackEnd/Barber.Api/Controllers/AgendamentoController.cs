@@ -33,25 +33,18 @@ namespace Barber.Api.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<AgendamentoDTO>> Get()
         {
-            try
+
+            var agendamentos = _uof.AgendamentoRepository.GetAll();
+            if (agendamentos is null)
             {
-                //throw new Exception("ocorreu um erro");
-                var agendamentos = _uof.AgendamentoRepository.GetAll();
-                if (agendamentos is null)
-                {
-                    return NotFound("agendamentos Não encontrado");
-                }
-
-                var agendamentosDto = agendamentos.ToAgendamentoDTOList();
-
-                return Ok(agendamentosDto);
-
+                return NotFound("agendamentos Não encontrado");
             }
-            catch (System.Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um problema ao tratar sua solicitação");
-            }
+
+            var agendamentosDto = agendamentos.ToAgendamentoDTOList();
+
+            return Ok(agendamentosDto);
+
+
 
         }
 
@@ -62,26 +55,20 @@ namespace Barber.Api.Controllers
         [HttpGet("{id:int}", Name = "ObterAgendamentos")]
         public ActionResult<AgendamentoDTO> Get(int id)
         {
-            try
+
+            var agendamento = _uof.AgendamentoRepository.Get(g => g.AgendamentoId == id);
+            if (agendamento is null)
             {
-                var agendamento = _uof.AgendamentoRepository.Get(g => g.AgendamentoId == id);
-                if (agendamento is null)
-                {
-                    return NotFound($"agendamento com id= {id} não encontrado");
-                }
-
-
-                var agendamentoDto = agendamento.ToAgendamentoDTO();
-
-                return Ok(agendamentoDto);
+                return NotFound($"agendamento com id= {id} não encontrado");
             }
 
-            catch (System.Exception)
-            {
 
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um problema ao tratar sua solicitação");
-            }
+            var agendamentoDto = agendamento.ToAgendamentoDTO();
+
+            return Ok(agendamentoDto);
+
+
+
 
         }
 

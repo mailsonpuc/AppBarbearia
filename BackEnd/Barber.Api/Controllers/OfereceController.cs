@@ -32,25 +32,18 @@ namespace Barber.Api.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<OfereceDTO>> Get()
         {
-            try
+
+            var ofereces = _uof.OfereceRepository.GetAll();
+            if (ofereces is null)
             {
-                //throw new Exception("ocorreu um erro");
-                var ofereces = _uof.OfereceRepository.GetAll();
-                if (ofereces is null)
-                {
-                    return NotFound("ofereces Não encontrado");
-                }
-
-                var oferecesDto = ofereces.ToOfereceDTOList();
-
-                return Ok(oferecesDto);
-
+                return NotFound("ofereces Não encontrado");
             }
-            catch (System.Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um problema ao tratar sua solicitação");
-            }
+
+            var oferecesDto = ofereces.ToOfereceDTOList();
+
+            return Ok(oferecesDto);
+
+
 
         }
 
@@ -61,24 +54,16 @@ namespace Barber.Api.Controllers
         [HttpGet("{id:int}", Name = "ObterOferece")]
         public ActionResult<OfereceDTO> Get(int id)
         {
-            try
-            {
-                var oferece = _uof.OfereceRepository.Get(o => o.ServicoId == id);
-                if (oferece is null)
-                {
-                    return NotFound($"oferece com id= {id} não encontrado");
-                }
 
-                var ofereceDto = oferece.ToOfereceDTO();
-                return Ok(ofereceDto);
+            var oferece = _uof.OfereceRepository.Get(o => o.ServicoId == id);
+            if (oferece is null)
+            {
+                return NotFound($"oferece com id= {id} não encontrado");
             }
 
-            catch (System.Exception)
-            {
+            var ofereceDto = oferece.ToOfereceDTO();
+            return Ok(ofereceDto);
 
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um problema ao tratar sua solicitação");
-            }
 
         }
 
@@ -144,7 +129,7 @@ namespace Barber.Api.Controllers
 
 
             var ofereceExcluido = _uof.OfereceRepository.Delete(oferece);
-          
+
             return Ok(ofereceExcluido);
 
         }

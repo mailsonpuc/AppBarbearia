@@ -31,25 +31,19 @@ namespace Barber.Api.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<ClienteDTO>> Get()
         {
-            try
+
+            var clientes = _uof.ClienteRepository.GetAll();
+            if (clientes is null)
             {
-                //throw new Exception("ocorreu um erro");
-                var clientes = _uof.ClienteRepository.GetAll();
-                if (clientes is null)
-                {
-                    return NotFound("clientes Não encontrado");
-                }
-
-                var clientesDto = clientes.ToClienteDTOList();
-
-                return Ok(clientesDto);
-
+                return NotFound("clientes Não encontrado");
             }
-            catch (System.Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um problema ao tratar sua solicitação");
-            }
+
+            var clientesDto = clientes.ToClienteDTOList();
+
+            return Ok(clientesDto);
+
+
+
 
         }
 
@@ -63,25 +57,17 @@ namespace Barber.Api.Controllers
         [HttpGet("{id:int}", Name = "ObterCliente")]
         public ActionResult<ClienteDTO> Get(int id)
         {
-            try
+
+            var cliente = _uof.ClienteRepository.Get(c => c.ClienteId == id);
+            if (cliente is null)
             {
-                var cliente = _uof.ClienteRepository.Get(c => c.ClienteId == id);
-                if (cliente is null)
-                {
-                    return NotFound($"cliente com id= {id} não encontrado");
-                }
-
-                var clienteDto = cliente.ToClienteDTO();
-
-                return Ok(clienteDto);
+                return NotFound($"cliente com id= {id} não encontrado");
             }
 
-            catch (System.Exception)
-            {
+            var clienteDto = cliente.ToClienteDTO();
 
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um problema ao tratar sua solicitação");
-            }
+            return Ok(clienteDto);
+
 
         }
 

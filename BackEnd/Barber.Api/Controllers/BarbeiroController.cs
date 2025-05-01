@@ -34,25 +34,19 @@ namespace Barber.Api.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<BarbeiroDTO>> Get()
         {
-            try
+
+            var barbeiros = _uof.BarbeiroRepository.GetAll();
+            if (barbeiros is null)
             {
-                //throw new Exception("ocorreu um erro");
-                var barbeiros = _uof.BarbeiroRepository.GetAll();
-                if (barbeiros is null)
-                {
-                    return NotFound("barbeiros Não encontrado");
-                }
-
-                var barbeirosDto = barbeiros.ToBarbeiroDTOList();
-
-                return Ok(barbeirosDto);
-
+                return NotFound("barbeiros Não encontrado");
             }
-            catch (System.Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um problema ao tratar sua solicitação");
-            }
+
+            var barbeirosDto = barbeiros.ToBarbeiroDTOList();
+
+            return Ok(barbeirosDto);
+
+
+
 
         }
 
@@ -63,25 +57,19 @@ namespace Barber.Api.Controllers
         [HttpGet("{id:int}", Name = "ObterBarbeiro")]
         public ActionResult<BarbeiroDTO> Get(int id)
         {
-            try
+
+            var barbeiro = _uof.BarbeiroRepository.Get(b => b.BarbeiroId == id);
+            if (barbeiro is null)
             {
-                var barbeiro = _uof.BarbeiroRepository.Get(b => b.BarbeiroId == id);
-                if (barbeiro is null)
-                {
-                    return NotFound($"barbeiro com id= {id} não encontrado");
-                }
-
-                var barbeirosDto = barbeiro.ToBarbeiroDTO();
-
-                return Ok(barbeirosDto);
+                return NotFound($"barbeiro com id= {id} não encontrado");
             }
 
-            catch (System.Exception)
-            {
+            var barbeirosDto = barbeiro.ToBarbeiroDTO();
 
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um problema ao tratar sua solicitação");
-            }
+            return Ok(barbeirosDto);
+
+
+
 
         }
 

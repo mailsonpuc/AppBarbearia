@@ -30,26 +30,16 @@ namespace Barber.Api.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<AvaliacaoDTO>> Get()
         {
-            try
+
+            var avaliacoes = _uof.AvaliacaoRepository.GetAll();
+            if (avaliacoes is null)
             {
-                //throw new Exception("ocorreu um erro");
-                var avaliacoes = _uof.AvaliacaoRepository.GetAll();
-                if (avaliacoes is null)
-                {
-                    return NotFound("avaliacoes Não encontrado");
-                }
-
-                var avaliacoesDto = avaliacoes.ToAvaliacaoDTOList();
-
-                return Ok(avaliacoesDto);
-
-            }
-            catch (System.Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um problema ao tratar sua solicitação");
+                return NotFound("avaliacoes Não encontrado");
             }
 
+            var avaliacoesDto = avaliacoes.ToAvaliacaoDTOList();
+
+            return Ok(avaliacoesDto);
         }
 
 
@@ -59,25 +49,20 @@ namespace Barber.Api.Controllers
         [HttpGet("{id:int}", Name = "ObterAvaliacao")]
         public ActionResult<AvaliacaoDTO> Get(int id)
         {
-            try
+
+            var avaliacao = _uof.AvaliacaoRepository.Get(a => a.AvaliacaoId == id);
+            if (avaliacao is null)
             {
-                var avaliacao = _uof.AvaliacaoRepository.Get(a => a.AvaliacaoId == id);
-                if (avaliacao is null)
-                {
-                    return NotFound($"avaliação com id= {id} não encontrado");
-                }
-
-                var avaliacaoDto = avaliacao.ToAvaliacaoDTO();
-
-                return Ok(avaliacaoDto);
+                _logger.LogWarning($"avaliação com id= {id} não encontrado...");
+                return NotFound($"avaliação com id= {id} não encontrado");
             }
 
-            catch (System.Exception)
-            {
+            var avaliacaoDto = avaliacao.ToAvaliacaoDTO();
 
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um problema ao tratar sua solicitação");
-            }
+            return Ok(avaliacaoDto);
+
+
+
 
         }
 

@@ -29,25 +29,18 @@ namespace Barber.Api.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<HorarioDisponivelDTO>> Get()
         {
-            try
+
+            var horarios = _uof.HorarioDisponivelRepository.GetAll();
+            if (horarios is null)
             {
-                //throw new Exception("ocorreu um erro");
-                var horarios = _uof.HorarioDisponivelRepository.GetAll();
-                if (horarios is null)
-                {
-                    return NotFound("horarios Não encontrado");
-                }
-
-                var horarioDisponielDto = horarios.ToHorarioDisponivelDTOList();
-
-                return Ok(horarioDisponielDto);
-
+                return NotFound("horarios Não encontrado");
             }
-            catch (System.Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um problema ao tratar sua solicitação");
-            }
+
+            var horarioDisponielDto = horarios.ToHorarioDisponivelDTOList();
+
+            return Ok(horarioDisponielDto);
+
+
 
         }
 
@@ -58,25 +51,17 @@ namespace Barber.Api.Controllers
         [HttpGet("{id:int}", Name = "ObterHorarios")]
         public ActionResult<HorarioDisponivelDTO> Get(int id)
         {
-            try
+
+            var horario = _uof.HorarioDisponivelRepository.Get(h => h.HorarioId == id);
+            if (horario is null)
             {
-                var horario = _uof.HorarioDisponivelRepository.Get(h => h.HorarioId == id);
-                if (horario is null)
-                {
-                    return NotFound($"horario com id= {id} não encontrado");
-                }
-
-                var horarioDto = horario.ToHorarioDisponivelDTO();
-
-                return Ok(horarioDto);
+                return NotFound($"horario com id= {id} não encontrado");
             }
 
-            catch (System.Exception)
-            {
+            var horarioDto = horario.ToHorarioDisponivelDTO();
 
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um problema ao tratar sua solicitação");
-            }
+            return Ok(horarioDto);
+
 
         }
 

@@ -36,26 +36,19 @@ namespace Barber.Api.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<HistoricoCorteDTO>> Get()
         {
-            try
+
+            var historicos = _uof.HistoricoCorteRepository.GetAll();
+            if (historicos is null)
             {
-                //throw new Exception("ocorreu um erro");
-                var historicos = _uof.HistoricoCorteRepository.GetAll();
-                if (historicos is null)
-                {
-                    return NotFound("historicos Não encontrado");
-                }
-
-                var historicoDto = historicos.ToHistoricoCorteDTOList();
-
-                return Ok(historicoDto);
-
-
+                return NotFound("historicos Não encontrado");
             }
-            catch (System.Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um problema ao tratar sua solicitação");
-            }
+
+            var historicoDto = historicos.ToHistoricoCorteDTOList();
+
+            return Ok(historicoDto);
+
+
+
 
         }
 
@@ -66,26 +59,18 @@ namespace Barber.Api.Controllers
         [HttpGet("{id:int}", Name = "Obterhistorico")]
         public ActionResult<HistoricoCorteDTO> Get(int id)
         {
-            try
+
+            var historico = _uof.HistoricoCorteRepository.Get(h => h.HistoricoId == id);
+            if (historico is null)
             {
-                var historico = _uof.HistoricoCorteRepository.Get(h => h.HistoricoId == id);
-                if (historico is null)
-                {
-                    return NotFound($"historico com id= {id} não encontrado");
-                }
-
-
-                var historicoDto = historico.ToHistoricoCorteDTO();
-
-                return Ok(historicoDto);
+                return NotFound($"historico com id= {id} não encontrado");
             }
 
-            catch (System.Exception)
-            {
 
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um problema ao tratar sua solicitação");
-            }
+            var historicoDto = historico.ToHistoricoCorteDTO();
+
+            return Ok(historicoDto);
+
 
         }
 
@@ -125,7 +110,7 @@ namespace Barber.Api.Controllers
 
             }
 
-             var historico = historicoDto.ToHistoricoCorte();
+            var historico = historicoDto.ToHistoricoCorte();
 
             var historicoAtualizado = _uof.HistoricoCorteRepository.Update(historico);
             _uof.Commit();

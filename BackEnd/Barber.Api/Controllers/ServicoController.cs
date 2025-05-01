@@ -33,25 +33,16 @@ namespace Barber.Api.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<ServicoDTO>> Get()
         {
-            try
+
+            var servicos = _uof.ServicoRepository.GetAll();
+            if (servicos is null)
             {
-                //throw new Exception("ocorreu um erro");
-                var servicos = _uof.ServicoRepository.GetAll();
-                if (servicos is null)
-                {
-                    return NotFound("servicos Não encontrado");
-                }
-
-                var servicosDto = servicos.ToServicoDTOList();
-
-                return Ok(servicosDto);
-
+                return NotFound("servicos Não encontrado");
             }
-            catch (System.Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um problema ao tratar sua solicitação");
-            }
+
+            var servicosDto = servicos.ToServicoDTOList();
+
+            return Ok(servicosDto);
 
         }
 
@@ -63,25 +54,16 @@ namespace Barber.Api.Controllers
         [HttpGet("{id:int}", Name = "ObterServico")]
         public ActionResult<ServicoDTO> Get(int id)
         {
-            try
+
+            var servico = _uof.ServicoRepository.Get(s => s.ServicoId == id);
+            if (servico is null)
             {
-                var servico = _uof.ServicoRepository.Get(s => s.ServicoId == id);
-                if (servico is null)
-                {
-                    return NotFound($"servico com id= {id} não encontrado");
-                }
-
-                var servicoDto = servico.ToServicoDTO();
-
-                return Ok(servicoDto);
+                return NotFound($"servico com id= {id} não encontrado");
             }
 
-            catch (System.Exception)
-            {
+            var servicoDto = servico.ToServicoDTO();
 
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um problema ao tratar sua solicitação");
-            }
+            return Ok(servicoDto);
 
         }
 
@@ -155,7 +137,7 @@ namespace Barber.Api.Controllers
             //converte Servico para ServicoDTO
 
             var servicoExcluidaDto = servicoExcluida.ToServicoDTO();
-            
+
             return Ok(servicoExcluidaDto);
 
 
