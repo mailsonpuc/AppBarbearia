@@ -63,6 +63,7 @@ namespace Barber.Api.Controllers
             var historico = _uof.HistoricoCorteRepository.Get(h => h.HistoricoId == id);
             if (historico is null)
             {
+                _logger.LogError($"historico com id= {id} não encontrada...");
                 return NotFound($"historico com id= {id} não encontrado");
             }
 

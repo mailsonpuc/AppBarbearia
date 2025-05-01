@@ -58,6 +58,7 @@ namespace Barber.Api.Controllers
             var oferece = _uof.OfereceRepository.Get(o => o.ServicoId == id);
             if (oferece is null)
             {
+                _logger.LogError($"oferece com id= {id} não encontrada...");
                 return NotFound($"oferece com id= {id} não encontrado");
             }
 

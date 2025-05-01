@@ -89,3 +89,66 @@ SELECT TOP(1) [o].[BarbeiroId], [o].[ServicoId], [o].[Duracao], [o].[IdBarbeiro]
 FROM [Oferece] AS [o]
 WHERE [o].[ServicoId] = @__id_0
 Information: 0 - Application is shutting down...
+Information: 14 - Now listening on: http://localhost:5011
+Information: 0 - Application started. Press Ctrl+C to shut down.
+Information: 0 - Hosting environment: Development
+Information: 0 - Content root path: /home/euSSD/AppBarbearia/BackEnd/Barber.Api
+Warning: 3 - Failed to determine the https port for redirect.
+Information: 20101 - Executed DbCommand (313ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+SELECT TOP(1) [a].[AgendamentoId], [a].[ClienteId], [a].[HorarioId], [a].[LembreteEnviado], [a].[ServicoId], [a].[Status]
+FROM [Agendamentos] AS [a]
+WHERE [a].[AgendamentoId] = @__id_0
+Information: 0 - Application is shutting down...
+Information: 14 - Now listening on: http://localhost:5011
+Information: 0 - Application started. Press Ctrl+C to shut down.
+Information: 0 - Hosting environment: Development
+Information: 0 - Content root path: /home/euSSD/AppBarbearia/BackEnd/Barber.Api
+Warning: 3 - Failed to determine the https port for redirect.
+Information: 20101 - Executed DbCommand (542ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+SELECT TOP(1) [a].[AgendamentoId], [a].[ClienteId], [a].[HorarioId], [a].[LembreteEnviado], [a].[ServicoId], [a].[Status]
+FROM [Agendamentos] AS [a]
+WHERE [a].[AgendamentoId] = @__id_0
+Warning: 0 - agendamento com id= 90 não encontrada...
+Information: 0 - Application is shutting down...
+Information: 14 - Now listening on: http://localhost:5011
+Information: 0 - Application started. Press Ctrl+C to shut down.
+Information: 0 - Hosting environment: Development
+Information: 0 - Content root path: /home/euSSD/AppBarbearia/BackEnd/Barber.Api
+Warning: 3 - Failed to determine the https port for redirect.
+Information: 20101 - Executed DbCommand (398ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+SELECT TOP(1) [a].[AvaliacaoId], [a].[AgendamentoId], [a].[Comentario], [a].[Data], [a].[Nota]
+FROM [Avaliacoes] AS [a]
+WHERE [a].[AvaliacaoId] = @__id_0
+Error: 0 - avaliacao com id= 888 não encontrada...
+Information: 0 - Application is shutting down...
+Information: 14 - Now listening on: http://localhost:5011
+Information: 0 - Application started. Press Ctrl+C to shut down.
+Information: 0 - Hosting environment: Development
+Information: 0 - Content root path: /home/euSSD/AppBarbearia/BackEnd/Barber.Api
+Warning: 3 - Failed to determine the https port for redirect.
+Information: 20101 - Executed DbCommand (282ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [a].[AgendamentoId], [a].[ClienteId], [a].[HorarioId], [a].[LembreteEnviado], [a].[ServicoId], [a].[Status]
+FROM [Agendamentos] AS [a]
+Information: 0 - puxando todos os agendamentos
+Information: 0 - Application is shutting down...
+Information: 14 - Now listening on: http://localhost:5011
+Information: 0 - Application started. Press Ctrl+C to shut down.
+Information: 0 - Hosting environment: Development
+Information: 0 - Content root path: /home/euSSD/AppBarbearia/BackEnd/Barber.Api
+Warning: 3 - Failed to determine the https port for redirect.
+Information: 20101 - Executed DbCommand (1,752ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [a].[AgendamentoId], [a].[ClienteId], [a].[HorarioId], [a].[LembreteEnviado], [a].[ServicoId], [a].[Status]
+FROM [Agendamentos] AS [a]
+Information: 0 - puxando todos os agendamentos
+Critical: 0 - Puxando tudo
+Information: 0 - Application is shutting down...
+Information: 14 - Now listening on: http://localhost:5011
+Information: 0 - Application started. Press Ctrl+C to shut down.
+Information: 0 - Hosting environment: Development
+Information: 0 - Content root path: /home/euSSD/AppBarbearia/BackEnd/Barber.Api
+Warning: 3 - Failed to determine the https port for redirect.
+Information: 20101 - Executed DbCommand (208ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [a].[AgendamentoId], [a].[ClienteId], [a].[HorarioId], [a].[LembreteEnviado], [a].[ServicoId], [a].[Status]
+FROM [Agendamentos] AS [a]
+Critical: 0 - Esta Puxando tudo, pode travar o servidor se tiver muitos dados
+Information: 0 - Application is shutting down...

@@ -37,10 +37,13 @@ namespace Barber.Api.Controllers
             var agendamentos = _uof.AgendamentoRepository.GetAll();
             if (agendamentos is null)
             {
+                _logger.LogWarning($"não encontrada...");
                 return NotFound("agendamentos Não encontrado");
             }
 
             var agendamentosDto = agendamentos.ToAgendamentoDTOList();
+            _logger.LogCritical("Usario Esta Puxando tudo, pode travar o servidor se tiver muitos dados");
+           
 
             return Ok(agendamentosDto);
 
@@ -59,6 +62,8 @@ namespace Barber.Api.Controllers
             var agendamento = _uof.AgendamentoRepository.Get(g => g.AgendamentoId == id);
             if (agendamento is null)
             {
+
+                _logger.LogWarning($"agendamento com id= {id} não encontrada...");
                 return NotFound($"agendamento com id= {id} não encontrado");
             }
 
@@ -80,6 +85,8 @@ namespace Barber.Api.Controllers
         {
             if (agendamentoDto is null)
             {
+
+                _logger.LogWarning($"Dados Invalidos..");
                 return BadRequest("Ocorreu um erro 400");
             }
 
@@ -104,6 +111,8 @@ namespace Barber.Api.Controllers
         {
             if (id != agendamentoDto.AgendamentoId)
             {
+
+                _logger.LogWarning($" não encontrada...");
                 return BadRequest("Não encontrado");
             }
 
@@ -128,6 +137,8 @@ namespace Barber.Api.Controllers
             var agendamento = _uof.AgendamentoRepository.Get(s => s.AgendamentoId == id);
             if (agendamento is null)
             {
+
+                _logger.LogWarning($"Agendamento com id= {id} não encontrada...");
                 return NotFound($"agendamento com id= {id} não Localizada...");
 
             }

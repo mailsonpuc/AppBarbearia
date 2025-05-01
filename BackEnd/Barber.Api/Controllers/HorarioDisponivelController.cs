@@ -55,6 +55,7 @@ namespace Barber.Api.Controllers
             var horario = _uof.HorarioDisponivelRepository.Get(h => h.HorarioId == id);
             if (horario is null)
             {
+                _logger.LogError($"horario com id= {id} não encontrada...");
                 return NotFound($"horario com id= {id} não encontrado");
             }
 

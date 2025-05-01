@@ -58,6 +58,7 @@ namespace Barber.Api.Controllers
             var servico = _uof.ServicoRepository.Get(s => s.ServicoId == id);
             if (servico is null)
             {
+                _logger.LogError($"servico com id= {id} não encontrada...");
                 return NotFound($"servico com id= {id} não encontrado");
             }
 
@@ -76,6 +77,7 @@ namespace Barber.Api.Controllers
         {
             if (servicoDto is null)
             {
+               
                 return BadRequest("Ocorreu um erro 400");
             }
 

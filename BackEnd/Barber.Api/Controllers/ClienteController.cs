@@ -61,6 +61,7 @@ namespace Barber.Api.Controllers
             var cliente = _uof.ClienteRepository.Get(c => c.ClienteId == id);
             if (cliente is null)
             {
+                _logger.LogError($"cliente com id= {id} não encontrada...");
                 return NotFound($"cliente com id= {id} não encontrado");
             }
 

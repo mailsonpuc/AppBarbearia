@@ -61,6 +61,7 @@ namespace Barber.Api.Controllers
             var barbeiro = _uof.BarbeiroRepository.Get(b => b.BarbeiroId == id);
             if (barbeiro is null)
             {
+                _logger.LogError($"barbeiro com id= {id} não encontrada...");
                 return NotFound($"barbeiro com id= {id} não encontrado");
             }
 

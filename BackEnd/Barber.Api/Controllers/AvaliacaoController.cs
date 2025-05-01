@@ -34,6 +34,8 @@ namespace Barber.Api.Controllers
             var avaliacoes = _uof.AvaliacaoRepository.GetAll();
             if (avaliacoes is null)
             {
+
+
                 return NotFound("avaliacoes Não encontrado");
             }
 
@@ -53,15 +55,15 @@ namespace Barber.Api.Controllers
             var avaliacao = _uof.AvaliacaoRepository.Get(a => a.AvaliacaoId == id);
             if (avaliacao is null)
             {
-                _logger.LogWarning($"avaliação com id= {id} não encontrado...");
+                //_logger.LogWarning($"avaliação com id= {id} não encontrado...");
+
+                _logger.LogError($"avaliacao com id= {id} não encontrada...");
                 return NotFound($"avaliação com id= {id} não encontrado");
             }
 
             var avaliacaoDto = avaliacao.ToAvaliacaoDTO();
 
             return Ok(avaliacaoDto);
-
-
 
 
         }
