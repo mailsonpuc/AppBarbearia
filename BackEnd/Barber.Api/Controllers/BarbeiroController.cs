@@ -2,8 +2,10 @@
 using Barber.Api.DTOS;
 using Barber.Api.DTOS.Mappings;
 using Barber.Api.Models;
+using Barber.Api.Pagination;
 using Barber.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 
 namespace Barber.Api.Controllers
@@ -49,6 +51,34 @@ namespace Barber.Api.Controllers
 
 
         }
+
+
+
+
+   
+        [HttpGet("pagination")]
+        public ActionResult<IEnumerable<BarbeiroDTO>> Get([FromQuery] BarbeirosParameters barbeirosParameters)
+        {
+            var barbeiros = _uof.BarbeiroRepository.GetBarbeiros(barbeirosParameters);
+
+            var metadata = new
+            {
+                barbeiros.TotalCount,
+                barbeiros.PageSize,
+                barbeiros.CurrentPage,
+                barbeiros.TotalPages,
+                barbeiros.HasNext,
+                barbeiros.HasPrevious
+            };
+
+
+
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metadata));
+            var barbeirosDto = barbeiros.ToBarbeiroDTOList();
+
+            return Ok(barbeirosDto);
+        }
+
 
 
 

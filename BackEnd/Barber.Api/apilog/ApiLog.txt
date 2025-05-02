@@ -277,3 +277,90 @@ Information: 20101 - Executed DbCommand (12ms) [Parameters=[], CommandType='Text
 SELECT [a].[AgendamentoId], [a].[ClienteId], [a].[HorarioId], [a].[LembreteEnviado], [a].[ServicoId], [a].[Status]
 FROM [Agendamentos] AS [a]
 Information: 0 - Application is shutting down...
+Information: 14 - Now listening on: http://localhost:5011
+Information: 0 - Application started. Press Ctrl+C to shut down.
+Information: 0 - Hosting environment: Development
+Information: 0 - Content root path: /home/euSSD/AppBarbearia/BackEnd/Barber.Api
+Warning: 3 - Failed to determine the https port for redirect.
+Information: 20101 - Executed DbCommand (486ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [b].[BarbeiroId], [b].[Email], [b].[Nome], [b].[Senha], [b].[Telefone]
+FROM [Barbeiros] AS [b]
+Information: 20101 - Executed DbCommand (108ms) [Parameters=[@p0='?' (Size = 100), @p1='?' (Size = 100), @p2='?' (Size = 200), @p3='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Barbeiros] ([Email], [Nome], [Senha], [Telefone])
+OUTPUT INSERTED.[BarbeiroId]
+VALUES (@p0, @p1, @p2, @p3);
+Information: 20101 - Executed DbCommand (25ms) [Parameters=[@p0='?' (Size = 100), @p1='?' (Size = 100), @p2='?' (Size = 200), @p3='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Barbeiros] ([Email], [Nome], [Senha], [Telefone])
+OUTPUT INSERTED.[BarbeiroId]
+VALUES (@p0, @p1, @p2, @p3);
+Information: 20101 - Executed DbCommand (32ms) [Parameters=[@p0='?' (Size = 100), @p1='?' (Size = 100), @p2='?' (Size = 200), @p3='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Barbeiros] ([Email], [Nome], [Senha], [Telefone])
+OUTPUT INSERTED.[BarbeiroId]
+VALUES (@p0, @p1, @p2, @p3);
+Information: 20101 - Executed DbCommand (15ms) [Parameters=[@p0='?' (Size = 100), @p1='?' (Size = 100), @p2='?' (Size = 200), @p3='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Barbeiros] ([Email], [Nome], [Senha], [Telefone])
+OUTPUT INSERTED.[BarbeiroId]
+VALUES (@p0, @p1, @p2, @p3);
+Information: 20101 - Executed DbCommand (25ms) [Parameters=[@p0='?' (Size = 100), @p1='?' (Size = 100), @p2='?' (Size = 200), @p3='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Barbeiros] ([Email], [Nome], [Senha], [Telefone])
+OUTPUT INSERTED.[BarbeiroId]
+VALUES (@p0, @p1, @p2, @p3);
+Information: 20101 - Executed DbCommand (27ms) [Parameters=[@p0='?' (Size = 100), @p1='?' (Size = 100), @p2='?' (Size = 200), @p3='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Barbeiros] ([Email], [Nome], [Senha], [Telefone])
+OUTPUT INSERTED.[BarbeiroId]
+VALUES (@p0, @p1, @p2, @p3);
+Information: 20101 - Executed DbCommand (24ms) [Parameters=[@p0='?' (Size = 100), @p1='?' (Size = 100), @p2='?' (Size = 200), @p3='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Barbeiros] ([Email], [Nome], [Senha], [Telefone])
+OUTPUT INSERTED.[BarbeiroId]
+VALUES (@p0, @p1, @p2, @p3);
+Information: 20101 - Executed DbCommand (25ms) [Parameters=[@p0='?' (Size = 100), @p1='?' (Size = 100), @p2='?' (Size = 200), @p3='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Barbeiros] ([Email], [Nome], [Senha], [Telefone])
+OUTPUT INSERTED.[BarbeiroId]
+VALUES (@p0, @p1, @p2, @p3);
+Information: 20101 - Executed DbCommand (25ms) [Parameters=[@p0='?' (Size = 100), @p1='?' (Size = 100), @p2='?' (Size = 200), @p3='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Barbeiros] ([Email], [Nome], [Senha], [Telefone])
+OUTPUT INSERTED.[BarbeiroId]
+VALUES (@p0, @p1, @p2, @p3);
+Information: 20101 - Executed DbCommand (28ms) [Parameters=[@p0='?' (Size = 100), @p1='?' (Size = 100), @p2='?' (Size = 200), @p3='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Barbeiros] ([Email], [Nome], [Senha], [Telefone])
+OUTPUT INSERTED.[BarbeiroId]
+VALUES (@p0, @p1, @p2, @p3);
+Information: 20101 - Executed DbCommand (28ms) [Parameters=[@p0='?' (Size = 100), @p1='?' (Size = 100), @p2='?' (Size = 200), @p3='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Barbeiros] ([Email], [Nome], [Senha], [Telefone])
+OUTPUT INSERTED.[BarbeiroId]
+VALUES (@p0, @p1, @p2, @p3);
+Information: 20101 - Executed DbCommand (6ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [b].[BarbeiroId], [b].[Email], [b].[Nome], [b].[Senha], [b].[Telefone]
+FROM [Barbeiros] AS [b]
+Information: 20101 - Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [b].[BarbeiroId], [b].[Email], [b].[Nome], [b].[Senha], [b].[Telefone]
+FROM [Barbeiros] AS [b]
+Information: 20101 - Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [b].[BarbeiroId], [b].[Email], [b].[Nome], [b].[Senha], [b].[Telefone]
+FROM [Barbeiros] AS [b]
+Information: 20101 - Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [b].[BarbeiroId], [b].[Email], [b].[Nome], [b].[Senha], [b].[Telefone]
+FROM [Barbeiros] AS [b]
+Information: 0 - Application is shutting down...
