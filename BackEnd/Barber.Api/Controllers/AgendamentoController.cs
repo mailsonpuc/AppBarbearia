@@ -5,6 +5,7 @@ using Barber.Api.Models;
 using Barber.Api.Pagination;
 using Barber.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 
 namespace Barber.Api.Controllers
@@ -56,18 +57,43 @@ namespace Barber.Api.Controllers
 
 
 
-        [HttpGet("pagination")]
-        public ActionResult<IEnumerable<AgendamentoDTO>> Get([FromQuery] AgendamentosParameters agendamentosParameters)
-        {
-            // Obtém a lista de agendamentos do repositório
-            var agendamentos = _uof.AgendamentoRepository.GetAgendamentos(agendamentosParameters);
+        // [HttpGet("pagination")]
+        // public ActionResult<IEnumerable<AgendamentoDTO>> Get([FromQuery] AgendamentosParameters agendamentosParameters)
+        // {
+        //     // Obtém a lista de agendamentos do repositório
+        //     var agendamentos = _uof.AgendamentoRepository.GetAgendamentos(agendamentosParameters);
 
-            // Converte a lista de Agendamentos em uma lista de AgendamentoDTO usando a extensão
+        //     // Converte a lista de Agendamentos em uma lista de AgendamentoDTO usando a extensão
+        //     var agendamentosDto = agendamentos.ToAgendamentoDTOList();
+        //     _logger.LogWarning("Usuario esta usando a pagination");
+
+        //     return Ok(agendamentosDto);
+        // }
+
+
+        [HttpGet("pagination")]
+        public ActionResult<IEnumerable<AgendamentoDTO>> Get([FromQuery] AgendamentosParameters agendamentoasParameters)
+        {
+            var agendamentos = _uof.AgendamentoRepository.GetAgendamentos(agendamentoasParameters);
+
+            var metadata = new
+            {
+                agendamentos.TotalCount,
+                agendamentos.PageSize,
+                agendamentos.CurrentPage,
+                agendamentos.TotalPages,
+                agendamentos.HasNext,
+                agendamentos.HasPrevious
+            };
+
+
+
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metadata));
             var agendamentosDto = agendamentos.ToAgendamentoDTOList();
-            _logger.LogWarning("Usuario esta usando a pagination");
 
             return Ok(agendamentosDto);
         }
+
 
 
 

@@ -7,7 +7,9 @@ namespace Barber.Api.Repositories.Interfaces
     public interface IAgendamentoRepository : IRepository<Agendamento>
     {
 
-        IEnumerable<Agendamento> GetAgendamentos(AgendamentosParameters agendamentosParams);
+        // IEnumerable<Agendamento> GetAgendamentos(AgendamentosParameters agendamentosParams);
+         PagedList<Agendamento> GetAgendamentos(AgendamentosParameters agendamentosParameters);
+         
 
     }
 }

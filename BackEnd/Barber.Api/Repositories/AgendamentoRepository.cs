@@ -14,14 +14,29 @@ namespace Barber.Api.Repositories
 
 
 
-        public IEnumerable<Agendamento> GetAgendamentos(AgendamentosParameters agendamentosParams)
-        {
-            return GetAll()
-            .OrderBy(p => p.AgendamentoId)
-            .Skip((agendamentosParams.PageNumber - 1) * agendamentosParams.PageSize)
-            .Take(agendamentosParams.PageSize).ToList();
+        // public IEnumerable<Agendamento> GetAgendamentos(AgendamentosParameters agendamentosParams)
+        // {
+        //     return GetAll()
+        //     .OrderBy(p => p.AgendamentoId)
+        //     .Skip((agendamentosParams.PageNumber - 1) * agendamentosParams.PageSize)
+        //     .Take(agendamentosParams.PageSize).ToList();
 
+        // }
+
+        PagedList<Agendamento> IAgendamentoRepository.GetAgendamentos(AgendamentosParameters agendamentosParameters)
+        {
+            var agendamentos = GetAll().OrderBy(p => p.AgendamentoId).AsQueryable();
+
+            var agendamentosOrdenados = PagedList<Agendamento>.ToPagedList(agendamentos,
+                        agendamentosParameters.PageNumber, agendamentosParameters.PageSize);
+
+            return agendamentosOrdenados;
         }
+
+
+
+
+
 
 
 
