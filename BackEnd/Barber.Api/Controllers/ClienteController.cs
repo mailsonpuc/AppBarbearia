@@ -2,8 +2,10 @@
 using Barber.Api.DTOS;
 using Barber.Api.DTOS.Mappings;
 using Barber.Api.Models;
+using Barber.Api.Pagination;
 using Barber.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 
 namespace Barber.Api.Controllers
@@ -47,6 +49,38 @@ namespace Barber.Api.Controllers
 
         }
 
+
+
+
+
+
+        [HttpGet("filter/nome/pagination")]
+        public ActionResult<IEnumerable<ClienteDTO>> GetClientesFiltrados(
+                                       [FromQuery] ClienteFiltroNome clientesFiltro)
+        {
+            var clientesFiltrados = _uof.ClienteRepository
+                                         .GetClientesFiltroNome(clientesFiltro);
+
+            return ObterClientes(clientesFiltrados);
+
+        }
+
+        private ActionResult<IEnumerable<ClienteDTO>> ObterClientes(PagedList<Cliente> clientes)
+        {
+            var metadata = new
+            {
+                clientes.TotalCount,
+                clientes.PageSize,
+                clientes.CurrentPage,
+                clientes.TotalPages,
+                clientes.HasNext,
+                clientes.HasPrevious
+            };
+
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metadata));
+            var clientesDto = clientes.ToClienteDTOList();
+            return Ok(clientesDto);
+        }
 
 
 
